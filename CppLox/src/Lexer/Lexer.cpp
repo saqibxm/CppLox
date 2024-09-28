@@ -131,8 +131,6 @@ void lox::Lexer::ScanToken()
 		else {
 			diagnostics.Error(line, current - 1, "Unknown Token (" + std::string(1, c) + ")\n");
 			// current - 1 problem arises from the structure since its advance() on top not peek()
-			// std::abort(); // remove and place a message on top that checks if diagnostic system ahs reported
-			// error and prints their count
 		}
 		break;
 	}
@@ -196,7 +194,7 @@ void lox::Lexer::string()
 
 	if (at_end())
 	{
-		diagnostics.Error(line, current, "Unterminated string literal!\n");
+		diagnostics.Error(line, current, "Unterminated string literal!");
 		return;
 	}
 
@@ -221,7 +219,7 @@ void lox::Lexer::number()
 		}
 		else
 		{
-			diagnostics.Error(line, current, "Trailing decimal point is prohibited!\n");
+			diagnostics.Error(line, current, "Trailing decimal point is prohibited!");
 			return;
 		}
 	}

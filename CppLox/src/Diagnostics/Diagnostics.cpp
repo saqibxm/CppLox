@@ -44,14 +44,21 @@ void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view
 	auto lineInfo = "Line " + std::to_string(line + 1) + " | ";
 	auto lineStr = std::string(source, start, current - start);
 	auto fault = lineInfo + lineStr;
-	std::cerr /*<< '\t'*/ << fault << std::endl;
 
-	// decorated line
-	/*
-	for (auto i = 0U; i < lineInfo.length(); ++i) std::cerr.put(' ');
-	std::cerr << decorate(lineStr, pos);*/
-	// std::cerr << '\t';
-	indicate(std::cerr, fault, lineInfo.length(), pos) << std::endl;
+	std::cerr << '\t' << fault << "\n\t";
+	indicate(std::cerr, fault, lineInfo.length(), pos) << '\n' << std::endl;
+}
+
+void lox::Diagnostics::Error(std::size_t line, std::string_view msg)
+{
+	std::cerr << "[ERROR] at Line " + std::to_string(line + 1) << ' ' << msg << std::endl;
+	if (hasSource)
+	{
+		std::string::size_type marker = 0;
+		while (line && (marker = source.find('\n', marker)) != std::string::npos) --line, ++marker;
+		std::cerr << '\t' << "Line | " << std::string(source, marker, source.find('\n', marker) - marker)
+			<< '\n' << std::endl;
+	}
 }
 
 std::string lox::Diagnostics::decorate(std::string_view msg, std::size_t pos, std::size_t len)
@@ -79,7 +86,11 @@ std::ostream& lox::Diagnostics::indicate(std::ostream &os, std::string_view msg,
 		while (len--) os.put(indicator);
 		while (marker++ < msg.length()) os.put(underline);
 	}
-	else os << "^-- Here";
+	else {
+		os.put(indicator);
+		while (marker < msg.length() + 2) { os.put('-'); ++marker; }
+		os << "<Here>";
+	}
 
 	os.setstate(old_state);
 	return os;

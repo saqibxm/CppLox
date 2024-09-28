@@ -15,6 +15,7 @@ void lox::Run(const std::string &source)
 
 	auto tokens = lexer.Scan();
 
+	std::cout << "<Tokens>\n";
 	for(const auto &token : tokens)
 		std::cout << token << std::endl;
 }
