@@ -61,6 +61,11 @@ const std::vector<lox::Token>& lox::Lexer::Scan()
 {
 	while (!at_end())
 	{
+		if (diagnostics.HasError())
+		{
+			std::cerr << diagnostics.Count() << " Error(s) Generated, Unable to Continue!\n";
+			break;
+		}
 		start = current; // move the start to the current character being considered : relative to source start
 		ScanToken();
 	}
@@ -124,9 +129,9 @@ void lox::Lexer::ScanToken()
 			number();
 		}
 		else {
-			diagnostics.Error(line, current - 1, "Unknown Token : " + std::string(1, c) + '\n');
+			diagnostics.Error(line, current - 1, "Unknown Token (" + std::string(1, c) + ")\n");
 			// current - 1 problem arises from the structure since its advance() on top not peek()
-			std::abort(); // remove and place a message on top that checks if diagnostic system ahs reported
+			// std::abort(); // remove and place a message on top that checks if diagnostic system ahs reported
 			// error and prints their count
 		}
 		break;
@@ -138,6 +143,8 @@ void lox::Lexer::Reset()
 	tokens.clear();
 
 	start = current = line = 0;
+
+	diagnostics.Reset();
 }
 
 

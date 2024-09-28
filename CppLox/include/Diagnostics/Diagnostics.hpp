@@ -26,6 +26,8 @@ public:
 	void Warn(Token, std::string_view);
 
 	void Reset();
+	bool HasError() const;
+	std::size_t Count() const;
 
 private:
 	std::string_view source;
@@ -33,9 +35,9 @@ private:
 	bool hasError;
 	std::size_t errorCount;
 
-	[[deprectated("Use the ostream version!")]]
+	[[deprecated("Use the indicate ostream version!")]]
 	static std::string decorate(std::string_view msg, std::size_t pos, std::size_t len = 1); // highlight the specified token
-	static std::ostream& decorate(std::ostream&, std::string_view, std::size_t, std::size_t, std::size_t = 1);
+	static std::ostream& indicate(std::ostream&, std::string_view, std::size_t, std::size_t, std::size_t = 1);
 };
 
 }

@@ -31,7 +31,9 @@ void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view
 	++errorCount;
 
 	std::string severity = "[ERROR]";
-	std::string report = severity + " @ <" + std::to_string(line + 1) + ',' + std::to_string(pos + 1) + "> : " + static_cast<std::string>(msg);
+	std::string report = severity + " @ <" + std::to_string(line + 1) + ','
+		+ std::to_string(pos + 1) + "> : " + static_cast<std::string>(msg);
+
 	std::cerr << report << std::endl;
 
 	if (!hasSource) return;
@@ -42,13 +44,14 @@ void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view
 	auto lineInfo = "Line " + std::to_string(line + 1) + " | ";
 	auto lineStr = std::string(source, start, current - start);
 	auto fault = lineInfo + lineStr;
-	std::cerr << fault << std::endl;
+	std::cerr /*<< '\t'*/ << fault << std::endl;
 
 	// decorated line
 	/*
 	for (auto i = 0U; i < lineInfo.length(); ++i) std::cerr.put(' ');
 	std::cerr << decorate(lineStr, pos);*/
-	decorate(std::cerr, fault, lineInfo.length(), pos) << std::endl;
+	// std::cerr << '\t';
+	indicate(std::cerr, fault, lineInfo.length(), pos) << std::endl;
 }
 
 std::string lox::Diagnostics::decorate(std::string_view msg, std::size_t pos, std::size_t len)
@@ -58,19 +61,42 @@ std::string lox::Diagnostics::decorate(std::string_view msg, std::size_t pos, st
 	return ret;
 }
 
-std::ostream& lox::Diagnostics::decorate(std::ostream &os, std::string_view msg, std::size_t start, std::size_t pos, std::size_t len)
+std::ostream& lox::Diagnostics::indicate(std::ostream &os, std::string_view msg, std::size_t start, std::size_t pos, std::size_t len)
 {
 	auto old_state = os.rdstate();
 	os.clear();
 
-	std::string decoration; decoration.reserve(msg.length());
-	std::string::size_type marker;
-	for (marker = 0; marker < start; ++marker) os.put(' ');
-	while (marker++ < start + pos) os.put('_');
+	std::string::size_type marker = 0;
+	constexpr std::string::value_type wspace = ' ', underline = '_', indicator = '^';
+
+	// this whole part needs logic fix-up
+	while (marker < start) { os.put(wspace); ++marker; }
+	while (marker++ < start + pos) os.put(len > 1 ? underline : wspace);
+
 	marker += len;
-	while (len--) os.put('^');
-	while (marker++ < msg.length()) os.put('_');
+
+	if (len > 1) {
+		while (len--) os.put(indicator);
+		while (marker++ < msg.length()) os.put(underline);
+	}
+	else os << "^-- Here";
 
 	os.setstate(old_state);
 	return os;
+}
+
+void lox::Diagnostics::Reset()
+{
+	hasError = false;
+	errorCount = 0;
+}
+
+bool lox::Diagnostics::HasError() const
+{
+	return hasError;
+}
+
+std::size_t lox::Diagnostics::Count() const
+{
+	return errorCount;
 }
