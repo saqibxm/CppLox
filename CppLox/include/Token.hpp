@@ -52,14 +52,22 @@ namespace lox {
 	{
 		using LiteralOptional = std::optional<Literal>;
 	public:
-		Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)
+		/*Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)
 			: type(t), lexeme(value), literal(std::move(lit)), position(pos)
+		{
+			;
+		}*/
+		Token(TokenType t, std::string value, LiteralOptional lit, std::size_t ln, std::size_t pos = -1)
+			: type(t), lexeme(value), literal(std::move(lit)), line(ln), position(pos)
 		{
 			;
 		}
 
 		friend std::ostream& operator<<(std::ostream&, const Token&);
 		std::string to_string() const { return lox::util::to_string(type) + ' ' + lexeme; }
+		auto get_line() const { return line; }
+		auto get_pos() const { return position; }
+		auto get_len() const { return lexeme.length(); }
 		// bool is_literal() const { return literal; }
 	private:
 		TokenType type = TokenType::UNKNOWN;

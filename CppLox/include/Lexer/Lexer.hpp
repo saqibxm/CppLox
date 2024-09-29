@@ -59,4 +59,11 @@ private:
 	void number();
 };
 
+namespace util {
+	inline std::string make_plural(unsigned count, const std::string &str, std::string_view suffix)
+	{
+		// Thanks C++ Primer
+		return (count > 1 ? str + suffix.data() : str);
+	}
+}
 }

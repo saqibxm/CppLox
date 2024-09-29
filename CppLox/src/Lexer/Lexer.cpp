@@ -63,7 +63,9 @@ const std::vector<lox::Token>& lox::Lexer::Scan()
 	{
 		if (diagnostics.HasError())
 		{
-			std::cerr << diagnostics.Count() << " Error(s) Generated, Unable to Continue!\n";
+			auto count = diagnostics.ErrorCount();
+			std::cerr << (count == 1 ? "Error" : std::to_string(count) + " Errors") << " Generated, Unable to Continue!\n";
+			// std::cerr << count << ' ' << util::make_plural(count, "Error", "s") << " Generated, Unable to Continue!\n";
 			break;
 		}
 		start = current; // move the start to the current character being considered : relative to source start
@@ -130,6 +132,7 @@ void lox::Lexer::ScanToken()
 		}
 		else {
 			diagnostics.Error(line, current - 1, "Unknown Token (" + std::string(1, c) + ")\n");
+			diagnostics.Warn(Token(TokenType::FALSE, "FALSE", std::nullopt, line), "Test");
 			// current - 1 problem arises from the structure since its advance() on top not peek()
 		}
 		break;
@@ -155,13 +158,13 @@ bool lox::Lexer::match(std::string::value_type expected) {
 void lox::Lexer::add_token(TokenType type, Token::LiteralOptional literal) {
 	// can be split into two overloads one that takes Literal (not optional literal) and one that doesnt.
 	std::string text = source.substr(start, current - start);
-	tokens.emplace_back(type, text, literal, start);
+	tokens.emplace_back(type, text, literal, line, start);
 }
 
 void lox::Lexer::add_token(TokenType type, Literal literal)
 {
 	std::string text = source.substr(start, current - start);
-	tokens.emplace_back(type, text, literal, start);
+	tokens.emplace_back(type, text, literal, line, start);
 }
 
 void lox::Lexer::add_token(TokenType type)
