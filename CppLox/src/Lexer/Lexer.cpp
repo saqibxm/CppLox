@@ -72,7 +72,7 @@ const std::vector<lox::Token>& lox::Lexer::Scan()
 		ScanToken();
 	}
 
-	tokens.emplace_back(TokenType::EOFILE, std::string(), std::nullopt, line);
+	tokens.emplace_back(TokenType::EOFILE, std::string(), Literal::None, line);
 	return tokens;
 }
 
@@ -132,7 +132,6 @@ void lox::Lexer::ScanToken()
 		}
 		else {
 			diagnostics.Error(line, current - 1, "Unknown Token (" + std::string(1, c) + ")\n");
-			diagnostics.Warn(Token(TokenType::FALSE, "FALSE", std::nullopt, line), "Test");
 			// current - 1 problem arises from the structure since its advance() on top not peek()
 		}
 		break;
@@ -155,25 +154,28 @@ bool lox::Lexer::match(std::string::value_type expected) {
 	return true;
 }
 
+/*
 void lox::Lexer::add_token(TokenType type, Token::LiteralOptional literal) {
 	// can be split into two overloads one that takes Literal (not optional literal) and one that doesnt.
 	std::string text = source.substr(start, current - start);
-	tokens.emplace_back(type, text, literal, line, start);
-}
+	tokens.emplace_back(type, text, *literal, line, start);
+}*/
 
 void lox::Lexer::add_token(TokenType type, Literal literal)
 {
 	std::string text = source.substr(start, current - start);
-	tokens.emplace_back(type, text, literal, line, start);
+	tokens.emplace_back(type, text, std::move(literal), line, start);
 }
 
 void lox::Lexer::add_token(TokenType type)
 {
-	add_token(type, std::nullopt);
+	// add_token(type, std::nullopt);
+	add_token(type, Literal{});
 }
 
 void lox::Lexer::identifier()
 {
+	// constexpr std::string_view pattern = R"([a-zA-Z_][a-zA-Z_0-9])"; // for regex
 	while (std::isalnum(peek()))
 	{
 		increment();

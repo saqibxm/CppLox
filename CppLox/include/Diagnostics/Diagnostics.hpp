@@ -20,6 +20,9 @@ namespace lox
 	};
 	*/
 
+	// TODO: pass a boolean parameter that decides whether the error count persists (not when running line by line)
+	// Or simply add a member function to turn it off
+
 class Diagnostics
 {
 	using PositionInfo = std::tuple<std::size_t, std::size_t, std::size_t>;

@@ -2,6 +2,8 @@
 
 using namespace lox;
 
+const Literal Literal::None;
+
 Literal::Literal(Literal::Operand op) : literal(op)
 {
 	;
@@ -15,6 +17,21 @@ Literal::Literal(std::string_view str) : literal(static_cast<std::string>(str))
 {
 }*/
 
+void Literal::set(Operand op)
+{
+	literal.emplace<Operand>(op);
+}
+
+void Literal::set(std::string_view id)
+{
+	literal.emplace<std::string>(id);
+}
+
+void Literal::reset()
+{
+	// literal = Variant{};
+	literal = std::monostate{};
+}
 
 std::string Literal::get_identifier() const
 {

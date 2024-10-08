@@ -50,6 +50,7 @@ namespace lox {
 
 	struct Token
 	{
+		friend class ExperimentalPrinter;
 		using LiteralOptional = std::optional<Literal>;
 	public:
 		/*Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)
@@ -57,7 +58,7 @@ namespace lox {
 		{
 			;
 		}*/
-		Token(TokenType t, std::string value, LiteralOptional lit, std::size_t ln, std::size_t pos = -1)
+		Token(TokenType t, std::string value, Literal lit, std::size_t ln, std::size_t pos = -1)
 			: type(t), lexeme(value), literal(std::move(lit)), line(ln), position(pos)
 		{
 			;
@@ -72,7 +73,8 @@ namespace lox {
 	private:
 		TokenType type = TokenType::UNKNOWN;
 		std::string lexeme;
-		std::optional<Literal> literal;
+		// std::optional<Literal> literal;
+		Literal literal;
 		std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
 		std::size_t line;
 	};
