@@ -28,8 +28,14 @@ class Diagnostics
 	using PositionInfo = std::tuple<std::size_t, std::size_t, std::size_t>;
 public:
 	enum Type { WARNING, ERROR };
-	explicit Diagnostics(const std::string& = std::string{});
+ 
+ // Diagnostics() = default;
+	explicit Diagnostics(const std::string& = std::string{}); // susceptible to change
+ Diagnostics(std::string&&) = delete;
+
 	Diagnostics& operator=(const std::string&);
+ Diagnostics operator=(std::string&&) = delete;
+
 
 	void Report(Type, std::size_t, const std::string&);
 	void Report(Type, std::size_t, std::string_view, const std::string&); // line where and what variation
