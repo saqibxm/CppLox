@@ -14,45 +14,19 @@ namespace lox
 	class Operator;
 	class Value;
 
-	template <typename R = void>
 	struct ExprVisitor
 	{
 		// Static visitor functions
-		/*static*/ R visit(const Binary&);
-		/*static*/ R visit(const Unary&);
-		/*static*/ R visit(const Grouping&);
-		/*static*/ R visit(const Operator&);
-		/*static*/ R visit(const Value&);
-	};
-
-	struct ExperimentalVisitor
-	{
-		// Static visitor functions
-		virtual std::any visit(const Binary&) { return std::string("Binary"); }
-		virtual std::any visit(const Unary&) { return std::string("Binary"); }
-		virtual std::any visit(const Grouping&) { return std::string("Binary"); }
-		virtual std::any visit(const Operator&) { return std::string("Binary"); }
-		virtual std::any visit(const Value&) { return std::string("Binary"); }
+		virtual std::any visit(const Binary&) = 0;
+		virtual std::any visit(const Unary&) = 0;
+		virtual std::any visit(const Grouping&) = 0;
+		virtual std::any visit(const Operator&) = 0;
+		virtual std::any visit(const Value&) = 0;
 	};
 
 
-	struct ASTPrinter : public ExprVisitor<std::string>
+	class ASTPrinter : public ExprVisitor
 	{
-		using Base = ExprVisitor<std::string>;
-		using Base::visit;
-
-		std::string print(const Expression&);
-		std::string visit(const Binary & exp);
-		std::string visit(const Unary & exp);
-		std::string visit(const Grouping & exp);
-		std::string visit(const Operator & exp);
-		std::string visit(const Value & exp);
-	};
-
-	class ExperimentalPrinter : public ExperimentalVisitor
-	{
-		using Base = ExprVisitor<std::string>;
-
 	public:
 		std::string print(const Expression&);
 		std::any visit(const Binary&) override;
@@ -68,3 +42,27 @@ namespace lox
 		std::string add_space(const Expression&);
 	};
 }
+
+// template <typename R = void>
+// struct ExprVisitor
+// {
+// 	// Static visitor functions
+//	/*static*/ R visit(const Binary&);
+//	/*static*/ R visit(const Unary&);
+//	/*static*/ R visit(const Grouping&);
+//	/*static*/ R visit(const Operator&);
+//	/*static*/ R visit(const Value&);
+// };
+/*
+struct ASTPrinter : public ExprVisitor<std::string>
+{
+	using Base = ExprVisitor<std::string>;
+	using Base::visit;
+
+	std::string print(const Expression&);
+	std::string visit(const Binary & exp);
+	std::string visit(const Unary & exp);
+	std::string visit(const Grouping & exp);
+	std::string visit(const Operator & exp);
+	std::string visit(const Value & exp);
+};*/

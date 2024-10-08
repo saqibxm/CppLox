@@ -24,9 +24,8 @@ operator -> "==" | "!=" | "<" | "<=" | ">" | ">="
 namespace lox {
 	struct Expression
 	{
-		// virtual std::any accept(ExprVisitor<std::any>) const = 0;
-		virtual std::any accept(ExperimentalVisitor &visitor) const = 0;
-		// virtual std::string apply(ExprVisitor<std::string>) const = 0; // for pretty printer
+		virtual ~Expression() = default;
+		virtual std::any accept(ExprVisitor&) const = 0;
 	};
 	using ExprNode = std::unique_ptr<Expression>;
 
@@ -34,8 +33,8 @@ namespace lox {
 	{
 	public:
 		Operator(Token op);
-		// std::any accept(ExprVisitor<std::any> visitor) const override;
-		std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(ExprVisitor &visitor) const override;
+		// std::any accept(ExperimentalVisitor &visitor) const override;
 
 		Token operation;
 	};
@@ -44,8 +43,8 @@ namespace lox {
 	{
 	public:
 		Binary(ExprNode lhs, Token op, ExprNode rhs);
-		// std::any accept(ExprVisitor<std::any> visitor) const override;
-		std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(ExprVisitor &visitor) const override;
+		// std::any accept(ExperimentalVisitor &visitor) const override;
 
 	// private:
 		ExprNode left, right;
@@ -56,8 +55,8 @@ namespace lox {
 	{
 	public:
 		Unary(ExprNode exp, Token op);
-		// std::any accept(ExprVisitor<std::any> visitor) const override;
-		std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(ExprVisitor &visitor) const override;
+		// std::any accept(ExperimentalVisitor &visitor) const override;
 
 	// private:
 		ExprNode operand;
@@ -68,8 +67,7 @@ namespace lox {
 	{
 	public:
 		Grouping(ExprNode exp);
-		// std::any accept(ExprVisitor<std::any> visitor) const override;
-		std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(ExprVisitor &visitor) const override;
 
 	// private:
 		ExprNode expression;
@@ -79,8 +77,7 @@ namespace lox {
 	{
 	public:
 		Value(Literal val);
-		// std::any accept(ExprVisitor<std::any> visitor) const override;
-		std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(ExprVisitor &visitor) const override;
 
 		Literal value;
 	};

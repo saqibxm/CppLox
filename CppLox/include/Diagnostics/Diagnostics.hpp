@@ -31,10 +31,10 @@ public:
  
  // Diagnostics() = default;
 	explicit Diagnostics(const std::string& = std::string{}); // susceptible to change
- Diagnostics(std::string&&) = delete;
+	Diagnostics(std::string&&) = delete;
 
 	Diagnostics& operator=(const std::string&);
- Diagnostics operator=(std::string&&) = delete;
+	Diagnostics operator=(std::string&&) = delete;
 
 
 	void Report(Type, std::size_t, const std::string&);

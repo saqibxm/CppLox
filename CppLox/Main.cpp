@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {
 	std::ios::sync_with_stdio(false); // disable marker tracking with C stdio library functions
 
-	lox::ExperimentalPrinter printer;
+	lox::ASTPrinter printer;
 
 	auto expr = new lox::Unary(lox::ExprNode(new lox::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
 	auto expression = ExprNode(new Binary(

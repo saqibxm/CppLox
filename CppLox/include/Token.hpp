@@ -50,7 +50,7 @@ namespace lox {
 
 	struct Token
 	{
-		friend class ExperimentalPrinter;
+		friend class ASTPrinter;
 		using LiteralOptional = std::optional<Literal>;
 	public:
 		/*Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)

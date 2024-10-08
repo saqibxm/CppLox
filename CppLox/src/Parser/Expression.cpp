@@ -13,7 +13,7 @@ std::any lox::Binary::accept(ExprVisitor<std::any> visitor) const
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Binary::accept(ExperimentalVisitor & visitor) const
+std::any lox::Binary::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -29,7 +29,7 @@ std::any lox::Unary::accept(ExprVisitor<std::any> visitor) const
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Unary::accept(ExperimentalVisitor & visitor) const
+std::any lox::Unary::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -44,7 +44,7 @@ lox::Grouping::Grouping(ExprNode exp)
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Grouping::accept(ExperimentalVisitor & visitor) const
+std::any lox::Grouping::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -59,7 +59,7 @@ lox::Operator::Operator(Token op)
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Operator::accept(ExperimentalVisitor & visitor) const
+std::any lox::Operator::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -74,7 +74,7 @@ lox::Value::Value(Literal val)
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Value::accept(ExperimentalVisitor & visitor) const
+std::any lox::Value::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
