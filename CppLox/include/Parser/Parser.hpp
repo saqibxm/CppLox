@@ -23,19 +23,25 @@ primary -> NUMBER | STRING | "true" | "false" | "nil"
 
 namespace lox {
 
+	struct ParseError : public std::runtime_error
+	{
+		using std::runtime_error::runtime_error;
+	};
+
 	class Parser
 	{
 		// using TokenQueue = std::queue <Token, std::vector<Token>>;
 		using TokenQueue = std::vector<Token>;
 	public:
 		Parser(const TokenQueue&);
+		// Parser& operator=(const TokenQueue&);
 
 		ExprNode expression() {
 			return equality();
 		}
 
 	private:
-		const TokenQueue tokens;
+		TokenQueue tokens;
 		TokenQueue::size_type current = 0;
 
 		template <typename...Args>
@@ -48,6 +54,7 @@ namespace lox {
 		const Token& previous() const;
 
 		void consume(TokenType, const std::string&);
+		ParseError error(Token, const std::string&);
 
 		ExprNode equality();
 		ExprNode comparison();
@@ -97,7 +104,13 @@ namespace lox {
 
 	inline void Parser::consume(TokenType type, const std::string &msg)
 	{
-		if (match(type)) return;
-		else throw std::invalid_argument(msg);
+		if (check(type)) advance();
+		else throw error(peek(), msg);
+	}
+
+	inline ParseError Parser::error(Token token, const std::string &msg)
+	{
+		diagnostics.Error(token, msg);
+		return ParseError("Encountered Parse Error");
 	}
 }

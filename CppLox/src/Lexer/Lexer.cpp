@@ -24,12 +24,12 @@ const std::unordered_map<std::string, lox::TokenType> lox::Lexer::keywords = {
 };
 
 lox::Lexer::Lexer()
-	: source(), start(0), current(0), line(0)
+	: source(), start(0), current(0), line(0), diagnostics(lox::diagnostics)
 {
 }
 
 lox::Lexer::Lexer(const std::string & src)
-	: source(src), start(0), current(0), line(0), diagnostics(source)
+	: source(src), start(0), current(0), line(0), diagnostics(lox::diagnostics)
 {
 }
 
@@ -72,7 +72,7 @@ const std::vector<lox::Token>& lox::Lexer::Scan()
 		ScanToken();
 	}
 
-	tokens.emplace_back(TokenType::EOFILE, std::string(), Literal::None, line);
+	tokens.emplace_back(TokenType::EOFILE, std::string(), Literal::None, line, current);
 	return tokens;
 }
 

@@ -5,6 +5,12 @@ lox::Parser::Parser(const TokenQueue &toks)
 {
 }
 
+/*
+lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
+{
+	tokens = tok;
+}*/
+
 lox::ExprNode lox::Parser::equality()
 {
 	ExprNode expr = comparison();

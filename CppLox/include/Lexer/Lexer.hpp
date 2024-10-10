@@ -29,7 +29,7 @@ public:
 private:
 	std::string source;
 	std::vector<Token> tokens;
-	Diagnostics diagnostics;
+	Diagnostics &diagnostics;
 
 	std::size_t start;
 	std::size_t current;

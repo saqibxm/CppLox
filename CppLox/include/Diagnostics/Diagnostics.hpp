@@ -22,6 +22,7 @@ namespace lox
 
 	// TODO: pass a boolean parameter that decides whether the error count persists (not when running line by line)
 	// Or simply add a member function to turn it off
+	// Also make it a singleton or use dependency injection
 
 class Diagnostics
 {
@@ -36,19 +37,18 @@ public:
 	Diagnostics& operator=(const std::string&);
 	Diagnostics operator=(std::string&&) = delete;
 
-
 	void Report(Type, std::size_t, const std::string&);
 	void Report(Type, std::size_t, std::string_view, const std::string&); // line where and what variation
 
 	void Error(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Error(std::string_view msg, std::size_t line, std::size_t pos);
 	void Error(std::size_t line, std::string_view msg); // line number : only this should work given no source
-	void Error(Token, std::string_view);
+	void Error(Token, const std::string&);
 
 	void Warn(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Warn(std::string_view msg, std::size_t line, std::size_t pos);
 	void Warn(std::size_t line, std::string_view msg);
-	void Warn(Token, std::string_view);
+	void Warn(Token, const std::string&);
 
 	void Reset();
 	bool HasError() const;
@@ -68,4 +68,6 @@ private:
 	static std::ostream& indicate(std::ostream&, std::string_view, std::size_t, std::size_t, std::size_t = 1);
 	static std::size_t count_lines(std::string_view src, std::size_t pos);
 };
+
+	extern Diagnostics diagnostics;
 }

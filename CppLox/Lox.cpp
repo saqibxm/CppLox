@@ -12,10 +12,16 @@ void lox::Run(const std::string &source)
 {
 	// the interpreter's main work
 	static Lexer lexer;
+
 	lexer.Open(source);
 	lexer.Reset();
 
+	diagnostics = source;
+
 	auto tokens = lexer.Scan();
+	Parser parser(tokens);
+
+	std::cout << "AST: " << ASTPrinter().print(*parser.expression()) << std::endl;
 
 	std::cout << "<Tokens>\n";
 	for(const auto &token : tokens)

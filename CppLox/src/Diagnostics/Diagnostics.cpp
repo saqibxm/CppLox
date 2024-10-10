@@ -5,6 +5,8 @@
 
 using namespace lox;
 
+Diagnostics lox::diagnostics;
+
 Diagnostics::Diagnostics(const std::string &src)
 	: source(src), hasSource(!source.empty()), hasError(false), errorCount(0)
 {
@@ -61,8 +63,16 @@ void lox::Diagnostics::Error(std::size_t line, std::string_view msg)
 	}
 }
 
-void lox::Diagnostics::Error(Token token, std::string_view msg)
+void lox::Diagnostics::Error(Token token, const std::string &msg)
 {
+	/*
+	if (token.type == TokenType::EOFILE) {
+		Error(token.get_line(), token.get_pos(), " at end " + msg);
+	}
+	else {
+		Error(token.get_line(), token.get_pos(), " at '" + token.lexeme + "' " + msg);
+	}
+	*/
 	Error(token.get_line(), token.get_pos(), msg);
 }
 
@@ -84,7 +94,7 @@ void lox::Diagnostics::Warn(std::size_t line, std::string_view msg)
 	}
 }
 
-void lox::Diagnostics::Warn(Token token, std::string_view msg)
+void lox::Diagnostics::Warn(Token token, const std::string &msg)
 {
 	intenal_report(std::cerr, Type::WARNING, msg, { token.get_line(), token.get_pos(), token.get_len()});
 }

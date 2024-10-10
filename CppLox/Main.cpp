@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 {
 	std::ios::sync_with_stdio(false); // disable marker tracking with C stdio library functions
 
-	lox::ASTPrinter printer;
+	lox::ASTPrinter ast;
 	lox::RPNPrinter rpn;
 
 	auto expr = new lox::Unary(lox::ExprNode(new lox::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 		)
 	);
 
-	std::cout << printer.print(*expression) << std::endl;
+	std::cout << ast.print(*expression) << std::endl;
 	std::cout << rpn.print(*equation) << std::endl;
 	delete expr;
 
