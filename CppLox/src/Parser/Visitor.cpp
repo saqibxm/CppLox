@@ -50,5 +50,5 @@ std::any ASTPrinter::visit(const Operator &expr)
 }
 std::any ASTPrinter::visit(const Value &expr)
 {
-	return expr.value.empty() ? "nul" : expr.value.get();
+	return expr.value.empty() ? "nul" : expr.value.str();
 }

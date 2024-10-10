@@ -6,9 +6,11 @@
 #include "Lox.hpp" // includes common.h
 #include "Lexer/Lexer.hpp"
 
+#include "Parser/Parser.hpp"
+
 void lox::Run(const std::string &source)
 {
-	// the interpreter main work
+	// the interpreter's main work
 	static Lexer lexer;
 	lexer.Open(source);
 	lexer.Reset();

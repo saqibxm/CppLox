@@ -4,7 +4,8 @@ using namespace lox;
 
 const Literal Literal::None;
 
-Literal::Literal(Literal::Operand op) : literal(op)
+/*
+Literal::Literal(Operand op) : literal(op)
 {
 	;
 }
@@ -13,26 +14,52 @@ Literal::Literal(std::string_view str) : literal(static_cast<std::string>(str))
 {
 }
 
-/*auto Literal::get() const
+lox::Literal::Literal(std::nullptr_t)
+	: literal(null)
+{
+}
+*/
+/*
+lox::Literal::Literal(bool f) : literal(f)
+{
+}*/
+
+/*auto Literal::str() const
+{
+}*/
+
+/*
+lox::Literal::Literal(Variant value) : literal(std::move(value))
 {
 }*/
 
 void Literal::set(Operand op)
 {
-	literal.emplace<Operand>(op);
+	this->emplace<Operand>(op);
 }
 
 void Literal::set(std::string_view id)
 {
-	literal.emplace<std::string>(id);
+	this->emplace<std::string>(id);
+}
+
+void lox::Literal::set(std::nullptr_t)
+{
+	this->emplace<std::nullptr_t>(nullptr);
+}
+
+void lox::Literal::set(bool b)
+{
+	this->emplace<bool>(b);
 }
 
 void Literal::reset()
 {
 	// literal = Variant{};
-	literal = std::monostate{};
+	*this = std::monostate{};
 }
 
+/*
 std::string Literal::get_identifier() const
 {
 	auto p = std::get_if<std::string>(&literal);
@@ -40,16 +67,24 @@ std::string Literal::get_identifier() const
 	if (!p) throw std::invalid_argument("variant does not hold specified type!");
 	return *p;
 }
-
+*/
 std::string Literal::get_strliteral() const
 {
-	return std::get<std::string>(literal);
+	return std::get<std::string>(*this);
 }
 
-Literal::Operand Literal::get_number() const
+lox::Operand Literal::get_number() const
 {
-	auto p = std::get_if<Operand>(&literal);
+	auto p = std::get_if<Operand>(this);
 	if(!p)
 		throw std::invalid_argument("variant does not contain operand");
+	return *p;
+}
+
+bool lox::Literal::get_boolean() const
+{
+	auto p = std::get_if<bool>(this);
+
+	if (!p) throw std::invalid_argument("variant does not hold specified type!");
 	return *p;
 }

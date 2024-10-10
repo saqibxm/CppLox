@@ -51,6 +51,7 @@ namespace lox {
 	struct Token
 	{
 		friend class ASTPrinter;
+		friend class RPNPrinter;
 		using LiteralOptional = std::optional<Literal>;
 	public:
 		/*Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)
@@ -70,13 +71,13 @@ namespace lox {
 		auto get_pos() const { return position; }
 		auto get_len() const { return lexeme.length(); }
 		// bool is_literal() const { return literal; }
-	private:
+	// private:
 		TokenType type = TokenType::UNKNOWN;
-		std::string lexeme;
+		const std::string lexeme;
 		// std::optional<Literal> literal;
-		Literal literal;
-		std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
-		std::size_t line;
+		const Literal literal;
+		const std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
+		const std::size_t line;
 	};
 
 	std::ostream& operator<<(std::ostream&, const Token&);
