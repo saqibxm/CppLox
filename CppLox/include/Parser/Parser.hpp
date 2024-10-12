@@ -35,9 +35,13 @@ namespace lox {
 	public:
 		Parser(const TokenQueue&);
 		// Parser& operator=(const TokenQueue&);
-
-		ExprNode expression() {
-			return equality();
+		ExprNode Parse() {
+			try {
+				return expression();
+			}
+			catch (const ParseError &) {
+				return nullptr;
+			}
 		}
 
 	private:
@@ -55,7 +59,11 @@ namespace lox {
 
 		void consume(TokenType, const std::string&);
 		ParseError error(Token, const std::string&);
+		void synchronize();
 
+		ExprNode expression() {
+			return equality();
+		}
 		ExprNode equality();
 		ExprNode comparison();
 		ExprNode term();
@@ -112,5 +120,26 @@ namespace lox {
 	{
 		diagnostics.Error(token, msg);
 		return ParseError("Encountered Parse Error");
+	}
+
+	inline void Parser::synchronize()
+	{
+		advance();
+		while (!at_end()) {
+			if (previous().type == TokenType::SCOLON) return;
+
+			switch (peek().type) {
+			case TokenType::CLASS:
+			case TokenType::FN:
+			case TokenType::VAR:
+			case TokenType::FOR:
+			case TokenType::IF:
+			case TokenType::WHILE:
+			case TokenType::PRINT:
+			case TokenType::RETURN:
+				return;
+			}
+			advance();
+		}
 	}
 }

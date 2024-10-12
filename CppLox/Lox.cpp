@@ -21,11 +21,11 @@ void lox::Run(const std::string &source)
 	auto tokens = lexer.Scan();
 	Parser parser(tokens);
 
-	std::cout << "AST: " << ASTPrinter().print(*parser.expression()) << std::endl;
+	auto Expr = parser.Parse();
 
-	std::cout << "<Tokens>\n";
-	for(const auto &token : tokens)
-		std::cout << token << std::endl;
+	if (diagnostics.HasError()) return;
+
+	std::cout << "AST: " << ASTPrinter().print(*Expr) << std::endl;
 }
 
 void lox::RunPrompt()

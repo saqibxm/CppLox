@@ -89,5 +89,6 @@ lox::ExprNode lox::Parser::primary()
 		consume(TokenType::RPAREN, "Expected ')' after expression.");
 		return ExprNode(new Grouping(std::move(node)));
 	}
+	throw error(peek(), "Expected an expression!");
 	return nullptr;
 }
