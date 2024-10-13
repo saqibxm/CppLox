@@ -89,10 +89,15 @@ void lox::Lexer::ScanToken()
 	case '}': add_token(TokenType::RBRACE); break;
 	case ',': add_token(TokenType::COMMA);  break;
 	case '.': add_token(TokenType::DOT);    break;
-	case '-': add_token(TokenType::MINUS);  break;
-	case '+': add_token(TokenType::PLUS);   break;
+	case '-': add_token(match('-') ? TokenType::DOUBLE_MINUS : TokenType::MINUS);  break;
+	case '+': add_token(match('+') ? TokenType::DOUBLE_PLUS : TokenType::PLUS);   break;
 	case ';': add_token(TokenType::SCOLON); break;
 	case '*': add_token(TokenType::ASTERISK); break;
+	case '?': add_token(TokenType::QMARK); break;
+	case ':': add_token(TokenType::COLON); break;
+	case '%': add_token(TokenType::PERCENT); break;
+	case '&': add_token(match('&') ? TokenType::DOUBLE_AMP : TokenType::AMPERSAND); break;
+	case '|': add_token(match('|') ? TokenType::DOUBLE_LINE : TokenType::LINE); break;
 
 	case '/': // comment ought to be ignored
 		if (match('/')) {

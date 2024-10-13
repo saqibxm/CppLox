@@ -40,6 +40,10 @@ std::any ASTPrinter::visit(const Unary &expr)
 {
 	return parenthesize(expr.operation.lexeme, *expr.operand);
 }
+std::any lox::ASTPrinter::visit(const Conditional &expr)
+{
+	return parenthesize("conditional", *expr.condition, *expr.left, *expr.right);
+}
 std::any ASTPrinter::visit(const Grouping &expr)
 {
 	return parenthesize("group", *expr.expression);

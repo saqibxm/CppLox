@@ -3,12 +3,13 @@
 #include "Visitor.hpp"
 
 namespace lox {
-	class RPNPrinter : public ExprVisitor
+	class RPNPrinter : public Visitor
 	{
 	public:
 		std::string print(const Expression&);
 		std::any visit(const Binary&) override;
 		std::any visit(const Unary&) override;
+		std::any visit(const Conditional&) override;
 		std::any visit(const Grouping&) override;
 		std::any visit(const Operator&) override;
 		std::any visit(const Value&) override;

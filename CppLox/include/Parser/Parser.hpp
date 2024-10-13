@@ -9,14 +9,18 @@
 #include "Diagnostics/Diagnostics.hpp"
 
 // Follows this grammar
+// Conditional operator: left most side has highest precedence, middle has lowest.
 /*
-expression -> equality ;
+expression -> conditional ;
+conditional -> separation ( "?" expression : conditional )? ; // refer to cppref C conditonal operator
+separation -> equality ( "," equality )* ;
 equality -> comparison ( ( "!=" | "==" ) comparison )* ;
 comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term -> factor ( ( "-" | "+" ) factor )* ;
 factor -> unary ( ( "/" | "*" ) unary )* ;
-unary -> ( "!" | "-" ) unary
- | primary ;
+unary -> ( "!" | "-" | "--" | "++") unary
+ | postfix ;
+postfix -> primary ( "++" | "--" )? ; // prefix has same precedence as unary while postfix has higher
 primary -> NUMBER | STRING | "true" | "false" | "nil"
  | "(" expression ")" ;
 */
@@ -35,7 +39,7 @@ namespace lox {
 	public:
 		Parser(const TokenQueue&);
 		// Parser& operator=(const TokenQueue&);
-		ExprNode Parse() {
+		Expr Parse() {
 			try {
 				return expression();
 			}
@@ -61,15 +65,19 @@ namespace lox {
 		ParseError error(Token, const std::string&);
 		void synchronize();
 
-		ExprNode expression() {
-			return equality();
+		Expr expression() {
+			return conditional();
 		}
-		ExprNode equality();
-		ExprNode comparison();
-		ExprNode term();
-		ExprNode factor();
-		ExprNode unary();
-		ExprNode primary();
+
+		Expr conditional();
+		Expr separation();
+		Expr equality();
+		Expr comparison();
+		Expr term();
+		Expr factor();
+		Expr unary();
+		Expr secondary();
+		Expr primary();
 	};
 
 	template<typename ...Args>

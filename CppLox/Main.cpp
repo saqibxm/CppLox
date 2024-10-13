@@ -18,21 +18,21 @@ int main(int argc, char* argv[])
 	lox::ASTPrinter ast;
 	lox::RPNPrinter rpn;
 
-	auto expr = new lox::Unary(lox::ExprNode(new lox::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
-	auto expression = ExprNode(new Binary(
-		ExprNode(new lox::Unary(
-			ExprNode(new Value(123.0)),
+	auto expr = new lox::Unary(lox::Expr(new lox::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
+	auto expression = Expr(new Binary(
+		Expr(new lox::Unary(
+			Expr(new Value(123.0)),
 			Token(TokenType::MINUS, "-", {}, 1))),
 		Token(TokenType::ASTERISK, "*", {}, 1),
-		ExprNode(new Grouping(
-			ExprNode(new Value(45.67))))));
+		Expr(new Grouping(
+			Expr(new Value(45.67))))));
 
-	auto equation = ExprNode(
+	auto equation = Expr(
 		new Unary(
-		ExprNode(new Binary(
-			ExprNode(new Binary(ExprNode(new Value(1)), Token(TokenType::PLUS, "+", {}, 1), ExprNode(new Value(2)))),
+		Expr(new Binary(
+			Expr(new Binary(Expr(new Value(1)), Token(TokenType::PLUS, "+", {}, 1), Expr(new Value(2)))),
 			Token(TokenType::ASTERISK, "*", {}, 1),
-			ExprNode(new Binary(ExprNode(new Value(4)), Token(TokenType::ASTERISK, "-", {}, 1), ExprNode(new Value(3))))
+			Expr(new Binary(Expr(new Value(4)), Token(TokenType::ASTERISK, "-", {}, 1), Expr(new Value(3))))
 		)),
 			Token(TokenType::MINUS, "-", {}, 1)
 		)

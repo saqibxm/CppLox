@@ -16,6 +16,10 @@ std::any RPNPrinter::visit(const Unary &expr)
 {
 	return '{' + stringify(*expr.operand) + '}' + ' ' + expr.operation.lexeme;
 }
+std::any RPNPrinter::visit(const Conditional &expr)
+{
+	return std::string("Conditonal");
+}
 std::any RPNPrinter::visit(const Grouping &expr)
 {
 	return stringify(*expr.expression);

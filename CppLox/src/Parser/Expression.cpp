@@ -2,49 +2,49 @@
 
 using namespace lox;
 
-lox::Binary::Binary(ExprNode lhs, Token op, ExprNode rhs)
+lox::Binary::Binary(Expr lhs, Token op, Expr rhs)
 	: left(std::move(lhs)), right(std::move(rhs)), operation(std::move(op))
 {
 }
 
 /*
-std::any lox::Binary::accept(ExprVisitor<std::any> visitor) const
+std::any lox::Binary::accept(Visitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Binary::accept(ExprVisitor & visitor) const
+std::any lox::Binary::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
 
-lox::Unary::Unary(ExprNode exp, Token op)
+lox::Unary::Unary(Expr exp, Token op)
 	: operand(std::move(exp)), operation(op)
 {
 }
 
 /*
-std::any lox::Unary::accept(ExprVisitor<std::any> visitor) const
+std::any lox::Unary::accept(Visitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Unary::accept(ExprVisitor & visitor) const
+std::any lox::Unary::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
 
-lox::Grouping::Grouping(ExprNode exp)
+lox::Grouping::Grouping(Expr exp)
 	: expression(std::move(exp))
 {
 }
 
-/*std::any lox::Grouping::accept(ExprVisitor<std::any> visitor) const
+/*std::any lox::Grouping::accept(Visitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Grouping::accept(ExprVisitor & visitor) const
+std::any lox::Grouping::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -54,12 +54,12 @@ lox::Operator::Operator(Token op)
 {
 }
 
-/*std::any lox::Operator::accept(ExprVisitor<std::any> visitor) const
+/*std::any lox::Operator::accept(Visitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Operator::accept(ExprVisitor & visitor) const
+std::any lox::Operator::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -69,12 +69,22 @@ lox::Value::Value(Literal val)
 {
 }
 
-/*std::any lox::Value::accept(ExprVisitor<std::any> visitor) const
+/*std::any lox::Value::accept(Visitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any lox::Value::accept(ExprVisitor & visitor) const
+std::any lox::Value::accept(Visitor & visitor) const
+{
+	return visitor.visit(*this);
+}
+
+lox::Conditional::Conditional(Expr cond, Expr lhs, Expr rhs)
+	: condition(std::move(cond)), left(std::move(lhs)), right(std::move(rhs))
+{
+}
+
+std::any lox::Conditional::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }

@@ -10,27 +10,30 @@ namespace lox
 
 	class Binary;
 	class Unary;
+	class Conditional;
 	class Grouping;
 	class Operator;
 	class Value;
 
-	struct ExprVisitor
+	struct Visitor
 	{
 		// Static visitor functions
 		virtual std::any visit(const Binary&) = 0;
 		virtual std::any visit(const Unary&) = 0;
+		virtual std::any visit(const Conditional&) = 0;
 		virtual std::any visit(const Grouping&) = 0;
 		virtual std::any visit(const Operator&) = 0;
 		virtual std::any visit(const Value&) = 0;
 	};
 
 
-	class ASTPrinter : public ExprVisitor
+	class ASTPrinter : public Visitor
 	{
 	public:
 		std::string print(const Expression&);
 		std::any visit(const Binary&) override;
 		std::any visit(const Unary&) override;
+		std::any visit(const Conditional&) override;
 		std::any visit(const Grouping&) override;
 		std::any visit(const Operator&) override;
 		std::any visit(const Value&) override;
@@ -41,10 +44,32 @@ namespace lox
 
 		std::string add_space(const Expression&);
 	};
+
+	template <typename R>
+	struct XVisitor
+	{
+		virtual R visit(const Binary&) const = 0;
+		virtual R visit(const Unary&) const = 0;
+		virtual R visit(const Conditional&) const = 0;
+		virtual R visit(const Grouping&) const = 0;
+		virtual R visit(const Operator&) const = 0;
+		virtual R visit(const Value&) const = 0;
+	};
+
+	struct XPrinter : public XVisitor<std::string>
+	{
+		std::string print(const Expression&);
+		std::string visit(const Binary & exp) const override;
+		std::string visit(const Unary & exp) const override;
+		std::string visit(const Conditional & exp) const override;
+		std::string visit(const Grouping & exp) const override;
+		std::string visit(const Operator & exp) const override;
+		std::string visit(const Value & exp) const override;
+	};
 }
 
 // template <typename R = void>
-// struct ExprVisitor
+// struct Visitor
 // {
 // 	// Static visitor functions
 //	/*static*/ R visit(const Binary&);
@@ -54,9 +79,9 @@ namespace lox
 //	/*static*/ R visit(const Value&);
 // };
 /*
-struct ASTPrinter : public ExprVisitor<std::string>
+struct ASTPrinter : public Visitor<std::string>
 {
-	using Base = ExprVisitor<std::string>;
+	using Base = Visitor<std::string>;
 	using Base::visit;
 
 	std::string print(const Expression&);

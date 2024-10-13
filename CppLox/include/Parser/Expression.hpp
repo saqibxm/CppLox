@@ -25,16 +25,23 @@ namespace lox {
 	struct Expression
 	{
 		virtual ~Expression() = default;
-		virtual std::any accept(ExprVisitor&) const = 0;
+		virtual std::any accept(Visitor&) const = 0;
+
+		/*
+		template <typename R>
+		R accept(XVisitor<R> &visitor);
+		*/
+
+	protected:
+		// virtual std::any accept(XVisitor<std::any> &visitor) const = 0;
 	};
-	using ExprNode = std::unique_ptr<Expression>;
+	using Expr = std::unique_ptr<Expression>;
 
 	class Operator final : public Expression
 	{
 	public:
 		Operator(Token op);
-		std::any accept(ExprVisitor &visitor) const override;
-		// std::any accept(ExperimentalVisitor &visitor) const override;
+		std::any accept(Visitor &visitor) const override;
 
 		Token operation;
 	};
@@ -42,35 +49,46 @@ namespace lox {
 	class Binary final : public Expression
 	{
 	public:
-		Binary(ExprNode lhs, Token op, ExprNode rhs);
-		std::any accept(ExprVisitor &visitor) const override;
+		Binary(Expr lhs, Token op, Expr rhs);
+		std::any accept(Visitor &visitor) const override;
 		// std::any accept(ExperimentalVisitor &visitor) const override;
 
 	// private:
-		ExprNode left, right;
+		Expr left, right;
 		Token operation;
 	};
 
 	class Unary final : public Expression
 	{
 	public:
-		Unary(ExprNode exp, Token op);
-		std::any accept(ExprVisitor &visitor) const override;
+		Unary(Expr exp, Token op);
+		std::any accept(Visitor &visitor) const override;
 		// std::any accept(ExperimentalVisitor &visitor) const override;
 
 	// private:
-		ExprNode operand;
+		Expr operand;
 		Token operation;
+	};
+
+	class Conditional final : public Expression
+	{
+	public:
+		Conditional(Expr cond, Expr lhs, Expr rhs);
+		std::any accept(Visitor &visitor) const override;
+
+	// private:
+		Expr condition;
+		Expr left, right;
 	};
 
 	class Grouping final : public Expression
 	{
 	public:
-		Grouping(ExprNode exp);
-		std::any accept(ExprVisitor &visitor) const override;
+		Grouping(Expr exp);
+		std::any accept(Visitor &visitor) const override;
 
 	// private:
-		ExprNode expression;
+		Expr expression;
 	};
 
 	class Value final : public Expression
@@ -85,7 +103,7 @@ namespace lox {
 		Value(const std::string &str) : Value(Literal{str}) {}
 		Value(std::nullptr_t) : Value(Literal{nullptr}) {}
 
-		std::any accept(ExprVisitor &visitor) const override;
+		std::any accept(Visitor &visitor) const override;
 
 		Literal value;
 	};
@@ -111,7 +129,7 @@ class Value final : public Expression
 		Value(const std::string &str) : Value(Literal{str}) {}
 		Value(std::nullptr_t) : Value(Literal{Literal::null}) {}
 
-		std::any accept(ExprVisitor &visitor) const override;
+		std::any accept(Visitor &visitor) const override;
 
 		Literal value;
 	};

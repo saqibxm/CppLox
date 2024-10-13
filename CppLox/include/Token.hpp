@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <array>
 
 #include "Common.h"
 #include "Literal.hpp"
@@ -11,15 +12,17 @@ namespace lox {
 	enum class TokenType
 	{
 		// Global
-		UNKNOWN,
+		// UNKNOWN,
 
 		// Character Tokens : Single
 		LPAREN, RPAREN, LBRACE, RBRACE, COMMA, DOT,
 		MINUS, PLUS, SCOLON, COLON, SLASH, ASTERISK,
+		PERCENT, QMARK, AMPERSAND, LINE,
 
 		// Character Tokens : Multiple
 		NOT, NOT_EQUAL, EQUAL, COMPARE,
 		GREATER, GREATER_EQUAL, LESS, LESS_EQUAL,
+		DOUBLE_PLUS, DOUBLE_MINUS, DOUBLE_AMP, DOUBLE_LINE,
 
 		// Literals
 		IDENTIFIER, STRING, NUMBER,
@@ -28,7 +31,7 @@ namespace lox {
 		IF, ELSE, AND, OR, TRUE, FALSE, FOR, WHILE, FN,
 		NUL, PRINT, RETURN, VAR, THIS, SUPER, CLASS,
 
-		EOFILE // conflicts with internal EOF
+		EOFILE, SIZE // conflicts with internal EOF, SIZE for the total numbers of enumerators
 	};
 
 	enum class Keywords /* separate enum for keywords */
@@ -42,7 +45,19 @@ namespace lox::util {
 
 	inline std::string to_string(TokenType type)
 	{
-		return "Not Implemented!";
+		static std::array<std::string, static_cast<std::size_t>(TokenType::SIZE)> strings = {
+		"LPAREN", "RPAREN", "LBRACE", "RBRACE", "COMMA", "DOT",
+		"MINUS", "PLUS", "SCOLON", "COLON", "SLASH", "ASTERISK",
+		"PERCENT", "QMARK", "AMPERSAND", "LINE",
+		"NOT", "NOT_EQUAL", "EQUAL", "COMPARE",
+		"GREATER", "GREATER_EQUAL", "LESS", "LESS_EQUAL",
+		"DOUBLE_PLUS", "DOUBLE_MINUS", "DOUBLE_AMP", "DOUBLE_LINE",
+		"IDENTIFIER", "STRING", "NUMBER",
+		"IF", "ELSE", "AND", "OR", "TRUE", "FALSE", "FOR", "WHILE", "FN",
+		"NUL", "PRINT", "RETURN", "VAR", "THIS", "SUPER", "CLASS", "EOF"
+		};
+
+		return strings[static_cast<std::size_t>(type)];
 	}
 }
 
@@ -72,7 +87,7 @@ namespace lox {
 		auto get_len() const { return lexeme.length(); }
 		// bool is_literal() const { return literal; }
 	// private:
-		TokenType type = TokenType::UNKNOWN;
+		TokenType type = TokenType::EOFILE; // could use a separate enumerator for undefined value i.e. UNKNOWN
 		const std::string lexeme;
 		// std::optional<Literal> literal;
 		const Literal literal;
