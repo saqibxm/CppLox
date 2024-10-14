@@ -79,6 +79,11 @@ namespace lox {
 		{
 			;
 		}
+		Token(const Token &obj)
+			: type(obj.type), lexeme(obj.lexeme), literal(obj.literal), line(obj.line), position(obj.position)
+		{
+			;
+		}
 
 		friend std::ostream& operator<<(std::ostream&, const Token&);
 		std::string to_string() const { return lox::util::to_string(type) + ' ' + lexeme; }
@@ -88,11 +93,11 @@ namespace lox {
 		// bool is_literal() const { return literal; }
 	// private:
 		TokenType type = TokenType::EOFILE; // could use a separate enumerator for undefined value i.e. UNKNOWN
-		const std::string lexeme;
+		std::string lexeme;
 		// std::optional<Literal> literal;
-		const Literal literal;
-		const std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
-		const std::size_t line;
+		Literal literal;
+		std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
+		std::size_t line;
 	};
 
 	std::ostream& operator<<(std::ostream&, const Token&);

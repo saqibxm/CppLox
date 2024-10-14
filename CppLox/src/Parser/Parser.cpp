@@ -1,15 +1,17 @@
 #include "Parser/Parser.hpp"
 
 lox::Parser::Parser(const TokenQueue &toks)
-	: tokens(toks)
+	: tokens(toks), available(true), current(0)
 {
 }
 
-/*
 lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 {
-	tokens = tok;
-}*/
+	tokens = const_cast<TokenQueue&>(tok);
+	available = true;
+	current = 0;
+	return *this;
+}
 
 lox::Expr lox::Parser::conditional()
 {

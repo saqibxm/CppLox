@@ -29,11 +29,13 @@ namespace lox {
 
 		/*
 		template <typename R>
-		R accept(XVisitor<R> &visitor);
-		*/
+		R accept(const XVisitor<R> &visitor) const {
+			return std::any_cast<R>(accept_impl(reinterpret_cast<const XVisitor<std::any>&>(visitor)));
+		}
 
 	protected:
-		// virtual std::any accept(XVisitor<std::any> &visitor) const = 0;
+		virtual std::any accept_impl(std::any) const = 0;
+		*/
 	};
 	using Expr = std::unique_ptr<Expression>;
 
@@ -51,9 +53,8 @@ namespace lox {
 	public:
 		Binary(Expr lhs, Token op, Expr rhs);
 		std::any accept(Visitor &visitor) const override;
-		// std::any accept(ExperimentalVisitor &visitor) const override;
 
-	// private:
+		// private:
 		Expr left, right;
 		Token operation;
 	};
@@ -63,9 +64,8 @@ namespace lox {
 	public:
 		Unary(Expr exp, Token op);
 		std::any accept(Visitor &visitor) const override;
-		// std::any accept(ExperimentalVisitor &visitor) const override;
 
-	// private:
+		// private:
 		Expr operand;
 		Token operation;
 	};
@@ -76,7 +76,7 @@ namespace lox {
 		Conditional(Expr cond, Expr lhs, Expr rhs);
 		std::any accept(Visitor &visitor) const override;
 
-	// private:
+		// private:
 		Expr condition;
 		Expr left, right;
 	};
@@ -87,7 +87,7 @@ namespace lox {
 		Grouping(Expr exp);
 		std::any accept(Visitor &visitor) const override;
 
-	// private:
+		// private:
 		Expr expression;
 	};
 
@@ -99,16 +99,15 @@ namespace lox {
 		explicit Value(T b) : Value(Literal{ std::in_place_type<bool>, b }) {}
 		template <typename T,
 			typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, bool>>>
-		Value(T val) : Value(Literal{ std::in_place_type<Operand>, val }) {}
-		Value(const std::string &str) : Value(Literal{str}) {}
-		Value(std::nullptr_t) : Value(Literal{nullptr}) {}
+			Value(T val) : Value(Literal{ std::in_place_type<Operand>, val }) {}
+		Value(const std::string &str) : Value(Literal{ str }) {}
+		Value(std::nullptr_t) : Value(Literal{ nullptr }) {}
 
 		std::any accept(Visitor &visitor) const override;
 
 		Literal value;
 	};
 }
-
 /*
 template <typename T,
 			typename X = std::enable_if_t<std::conjunction(std::negation(std::is_same_v<T, bool>), std::is_convertible_v<T, Operand>)>>

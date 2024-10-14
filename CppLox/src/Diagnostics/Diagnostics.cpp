@@ -2,21 +2,21 @@
 #include <exception>
 
 #include "Diagnostics/Diagnostics.hpp"
+#include "Interpreter/Interpreter.hpp"
 
 using namespace lox;
 
 Diagnostics lox::diagnostics;
 
 Diagnostics::Diagnostics(const std::string &src)
-	: source(src), hasSource(!source.empty()), hasError(false), errorCount(0)
+	: source(src), hasSource(!source.empty()), hasError(false), hadRuntimeError(false), errorCount(0)
 {
 	;
 }
 
 Diagnostics& Diagnostics::operator=(const std::string &src)
 {
-	source = src;
-	hasSource = !source.empty();
+	SetSource(src);
 	return *this;
 }
 
@@ -74,6 +74,16 @@ void lox::Diagnostics::Error(Token token, const std::string &msg)
 	}
 	*/
 	Error(token.get_line(), token.get_pos(), msg);
+}
+
+void lox::Diagnostics::RuntimeError(const lox::RuntimeError &error)
+{
+	// std::cerr << error.what() << '\n' << "[Line:" << error.token.get_line() << "]\n";
+	std::cerr << "A lox Runtime Error has occured!\n";
+	Error(error.token, error.what());
+	// Todo make the indicator point to the violating operand/literal/token
+	if (--errorCount == 0) hasError = false;
+	hadRuntimeError = true;
 }
 
 void lox::Diagnostics::Warn(std::size_t line, std::size_t pos, std::string_view msg)
@@ -172,6 +182,11 @@ void lox::Diagnostics::Reset()
 bool lox::Diagnostics::HasError() const
 {
 	return hasError;
+}
+
+bool lox::Diagnostics::HadRuntimeError() const
+{
+	return hadRuntimeError;
 }
 
 std::size_t lox::Diagnostics::ErrorCount() const

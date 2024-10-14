@@ -58,13 +58,20 @@ namespace lox
 
 	struct XPrinter : public XVisitor<std::string>
 	{
-		std::string print(const Expression&);
+	public:
+		std::string print(const Expression&) const;
 		std::string visit(const Binary & exp) const override;
 		std::string visit(const Unary & exp) const override;
 		std::string visit(const Conditional & exp) const override;
 		std::string visit(const Grouping & exp) const override;
 		std::string visit(const Operator & exp) const override;
 		std::string visit(const Value & exp) const override;
+
+	private:
+		std::string add_space(const Expression&) const;
+
+		template <typename...Args>
+		std::string parenthesize(std::string name, const Expression& first, const Args&...rest) const;
 	};
 }
 

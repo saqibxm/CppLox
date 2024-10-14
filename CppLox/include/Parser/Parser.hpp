@@ -37,9 +37,11 @@ namespace lox {
 		// using TokenQueue = std::queue <Token, std::vector<Token>>;
 		using TokenQueue = std::vector<Token>;
 	public:
+		Parser() : available(false) {}
 		Parser(const TokenQueue&);
-		// Parser& operator=(const TokenQueue&);
+		Parser& operator=(const TokenQueue&);
 		Expr Parse() {
+			if (!available) throw std::invalid_argument("No tokens to parse.");
 			try {
 				return expression();
 			}
@@ -51,6 +53,8 @@ namespace lox {
 	private:
 		TokenQueue tokens;
 		TokenQueue::size_type current = 0;
+
+		bool available;
 
 		template <typename...Args>
 		bool match(Args...);

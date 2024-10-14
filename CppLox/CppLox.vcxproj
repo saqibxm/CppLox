@@ -149,6 +149,7 @@
     <ClCompile Include="Lox.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\Diagnostics\Diagnostics.cpp" />
+    <ClCompile Include="src\Interpreter\Interpreter.cpp" />
     <ClCompile Include="src\Lexer\Lexer.cpp" />
     <ClCompile Include="src\Literal.cpp" />
     <ClCompile Include="src\Parser\Expression.cpp" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="include\Diagnostics\Diagnostics.hpp" />
+    <ClInclude Include="include\Interpreter\Interpreter.hpp" />
     <ClInclude Include="include\Lexer\Lexer.hpp" />
     <ClInclude Include="include\Literal.hpp" />
     <ClInclude Include="include\Parser\Expression.hpp" />

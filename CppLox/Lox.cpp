@@ -5,25 +5,29 @@
 
 #include "Lox.hpp" // includes common.h
 #include "Lexer/Lexer.hpp"
-
 #include "Parser/Parser.hpp"
+#include "Interpreter/Interpreter.hpp"
+
+namespace {
+	static lox::Lexer lexer;
+	static lox::Parser parser;
+	static lox::Interpreter interpreter;
+}
 
 void lox::Run(const std::string &source)
 {
-	// the interpreter's main work
-	static Lexer lexer;
-
 	lexer.Open(source);
 	lexer.Reset();
 
 	diagnostics = source;
 
 	auto tokens = lexer.Scan();
-	Parser parser(tokens);
+	parser = tokens;
 
 	auto Expr = parser.Parse();
 
 	if (diagnostics.HasError()) return;
+	interpreter.Interpret(*Expr);
 
 	std::cout << "AST: " << ASTPrinter().print(*Expr) << std::endl;
 }

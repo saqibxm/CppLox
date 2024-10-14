@@ -79,6 +79,7 @@ std::any lox::Value::accept(Visitor & visitor) const
 	return visitor.visit(*this);
 }
 
+
 lox::Conditional::Conditional(Expr cond, Expr lhs, Expr rhs)
 	: condition(std::move(cond)), left(std::move(lhs)), right(std::move(rhs))
 {

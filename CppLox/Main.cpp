@@ -6,6 +6,7 @@
 
 #include "Parser/Visitor.hpp"
 #include "Parser/Expression.hpp"
+#include "Diagnostics/Diagnostics.hpp"
 
 #include "Parser/RPNPrinter.hpp"
 
@@ -48,4 +49,7 @@ int main(int argc, char* argv[])
 	}
 	else if (argc == 2) lox::RunFile(fs::path(argv[1]));
 	else lox::RunPrompt();
+
+	if (diagnostics.HasError()) return 65;
+	if (diagnostics.HadRuntimeError()) return 75;
 }

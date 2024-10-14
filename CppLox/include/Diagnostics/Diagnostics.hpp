@@ -11,6 +11,7 @@
 
 namespace lox
 {
+	struct RuntimeError;
 	/*
 	struct PositionInfo
 	{
@@ -37,6 +38,12 @@ public:
 	Diagnostics& operator=(const std::string&);
 	Diagnostics operator=(std::string&&) = delete;
 
+	void SetSource(const std::string& src) {
+		source = src;
+		hasSource = !source.empty();
+	}
+	void SetSource(std::string&&) = delete;
+
 	void Report(Type, std::size_t, const std::string&);
 	void Report(Type, std::size_t, std::string_view, const std::string&); // line where and what variation
 
@@ -45,6 +52,8 @@ public:
 	void Error(std::size_t line, std::string_view msg); // line number : only this should work given no source
 	void Error(Token, const std::string&);
 
+	void RuntimeError(const lox::RuntimeError&);
+
 	void Warn(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Warn(std::string_view msg, std::size_t line, std::size_t pos);
 	void Warn(std::size_t line, std::string_view msg);
@@ -52,6 +61,7 @@ public:
 
 	void Reset();
 	bool HasError() const;
+	bool HadRuntimeError() const;
 	std::size_t ErrorCount() const;
 	std::size_t WarnCount() const;
 	std::pair<std::size_t, std::size_t> Count() const;
@@ -60,6 +70,7 @@ private:
 	std::string_view source;
 	bool hasSource;
 	bool hasError; // redundant, since count is present
+	bool hadRuntimeError;
 	std::size_t errorCount, warnCount;
 
 	void intenal_report(std::ostream&, Type, std::string_view, PositionInfo); // unified logic
