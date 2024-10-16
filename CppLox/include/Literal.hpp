@@ -67,6 +67,7 @@ struct Literal : public std::variant<std::nullptr_t, Operand, std::string, bool>
 	bool get_boolean() const;
 };
 
+using Object = Literal;
 }
 
 /*

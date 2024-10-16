@@ -112,6 +112,16 @@ namespace lox::expr {
 
 		Literal value;
 	};
+
+	class Variable final : public Expression
+	{
+	public:
+		Variable(const Token&);
+
+		std::any accept(Visitor &visitor) const override;
+
+		Token name;
+	};
 }
 
 /*

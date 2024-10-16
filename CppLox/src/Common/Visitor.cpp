@@ -58,6 +58,11 @@ std::any ASTPrinter::visit(const Value &expr)
 	return expr.value.empty() ? "nul" : expr.value.str();
 }
 
+std::any lox::ASTPrinter::visit(const expr::Variable &expr)
+{
+	return "var: " + expr.name.lexeme;
+}
+
 /* vv XPrinter vv*/
 /*
 std::string expr::XPrinter::print(const Expression &expr) const

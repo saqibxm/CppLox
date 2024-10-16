@@ -138,17 +138,28 @@ std::any lox::Interpreter::visit(const expr::Value &expr)
 	return expr.value;
 }
 
-std::any lox::Interpreter::visit(stmt::Expression &stmt)
+std::any lox::Interpreter::visit(const expr::Variable &exp)
 {
-	evaluate(*stmt.expression);
-	return std::any();
+	return environment.get(exp.name);
 }
 
-std::any lox::Interpreter::visit(stmt::Print &stmt)
+void lox::Interpreter::visit(stmt::Expression &stmt)
+{
+	evaluate(*stmt.expression);
+}
+
+void lox::Interpreter::visit(stmt::Print &stmt)
 {
 	Literal value = evaluate(*stmt.expression);
 	std::cout << value.str() << std::endl;
-	return std::any();
+}
+
+void lox::Interpreter::visit(stmt::Var &stmt)
+{
+	Literal init; // default init to null
+	if (stmt.initializer != nullptr) init = evaluate(*stmt.initializer);
+
+	environment.define(stmt.name.lexeme, init);
 }
 
 void lox::Interpreter::execute(stmt::Statement &stmt)

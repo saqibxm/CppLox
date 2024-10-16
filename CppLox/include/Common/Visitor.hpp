@@ -14,6 +14,7 @@ namespace lox::expr
 	class Grouping;
 	class Operator;
 	class Value;
+	class Variable;
 
 	struct Visitor
 	{
@@ -24,6 +25,7 @@ namespace lox::expr
 		virtual std::any visit(const Grouping&) = 0;
 		virtual std::any visit(const Operator&) = 0;
 		virtual std::any visit(const Value&) = 0;
+		virtual std::any visit(const Variable&) = 0;
 	};
 }
 
@@ -32,11 +34,13 @@ namespace lox::stmt
 	struct Statement;
 	class Expression;
 	class Print;
+	class Var;
 
 	struct Visitor
 	{
-		virtual std::any visit(Expression&) = 0;
-		virtual std::any visit(Print&) = 0;
+		virtual void visit(Expression&) = 0;
+		virtual void visit(Print&) = 0;
+		virtual void visit(Var&) = 0;
 	};
 }
 
@@ -52,6 +56,7 @@ namespace lox
 		std::any visit(const expr::Grouping&) override;
 		std::any visit(const expr::Operator&) override;
 		std::any visit(const expr::Value&) override;
+		std::any visit(const expr::Variable&) override;
 
 	private:
 		template <typename...Args>

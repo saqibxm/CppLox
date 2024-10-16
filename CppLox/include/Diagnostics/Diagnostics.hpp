@@ -27,7 +27,7 @@ namespace lox
 
 class Diagnostics
 {
-	using PositionInfo = std::tuple<std::size_t, std::size_t, std::size_t>;
+	using PositionInfo = std::tuple<std::size_t, std::size_t, std::size_t>; // line, position, length
 public:
 	enum Type { WARNING, ERROR };
  
@@ -80,6 +80,17 @@ private:
 	static std::ostream& indicate(std::ostream&, std::string_view, std::size_t, std::size_t, std::size_t = 1);
 	static std::size_t count_lines(std::string_view src, std::size_t pos);
 };
+
+	struct RuntimeError : public std::runtime_error
+	{
+		RuntimeError(const Token &tok, const std::string &msg)
+			: runtime_error(msg), token(tok)
+		{
+			;
+		}
+
+		Token token;
+	};
 
 	extern Diagnostics diagnostics;
 }

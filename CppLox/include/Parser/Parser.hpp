@@ -22,7 +22,7 @@ factor -> unary ( ( "/" | "*" ) unary )* ;
 unary -> ( "!" | "-" | "--" | "++") unary
  | postfix ;
 postfix -> primary ( "++" | "--" )? ; // prefix has same precedence as unary while postfix has higher
-primary -> NUMBER | STRING | "true" | "false" | "nil"
+primary -> NUMBER | STRING | IDENTIFIER | "true" | "false" | "nil" ;
  | "(" expression ")" ;
 */
 
@@ -46,11 +46,7 @@ namespace lox {
 			if (!available) throw std::invalid_argument("No tokens to parse.");
 
 			StatementList statements; statements.reserve(100);
-			try {
-				while (!at_end()) statements.push_back(statement());
-			}
-			catch (const ParseError&) {
-			}
+			while (!at_end()) statements.push_back(declaration());
 			return statements;
 			/*
 			try {
@@ -76,18 +72,20 @@ namespace lox {
 		const Token& advance();
 		const Token& previous() const;
 
-		void consume(TokenType, const std::string&);
+		Token consume(TokenType, const std::string&);
 		ParseError error(Token, const std::string&);
 		void synchronize();
 
 
+		Stmt declaration();
+		Stmt variable_decl();
 		Stmt statement();
 		Stmt print_statement();
 		Stmt expression_statement();
+
 		Expr expression() {
 			return conditional();
 		}
-
 		Expr conditional();
 		Expr separation();
 		Expr equality();
@@ -137,10 +135,12 @@ namespace lox {
 		return tokens[current - 1];
 	}
 
-	inline void Parser::consume(TokenType type, const std::string &msg)
+	inline Token Parser::consume(TokenType type, const std::string &msg)
 	{
 		if (check(type)) advance();
 		else throw error(peek(), msg);
+
+		return previous();
 	}
 
 	inline ParseError Parser::error(Token token, const std::string &msg)

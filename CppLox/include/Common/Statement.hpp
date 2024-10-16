@@ -3,7 +3,9 @@
 #include "Common/Expression.hpp"
 
 /*
-program -> statement* ;
+program -> declaration* EOF ;
+declaration -> varDecl | statement ;
+varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
 statement -> expressionStmt | printStmt ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
@@ -22,7 +24,7 @@ namespace lox::stmt
 	struct Statement
 	{
 		virtual ~Statement() = default;
-		virtual std::any accept(Visitor&) = 0;
+		virtual void accept(Visitor&) = 0;
 	};
 
 	class Expression : public Statement
@@ -30,7 +32,7 @@ namespace lox::stmt
 	public:
 		Expression(Expr&&);
 		Expr expression;
-		std::any accept(Visitor&) override;
+		void accept(Visitor&) override;
 	};
 
 	class Print : public Statement
@@ -39,6 +41,17 @@ namespace lox::stmt
 		Print(Expr&&);
 		Expr expression;
 
-		std::any accept(Visitor&) override;
+		void accept(Visitor&) override;
+	};
+
+	class Var : public Statement
+	{
+	public:
+		Var(const Token&, Expr&&);
+
+		void accept(Visitor&) override;
+
+		Token name;
+		Expr initializer;
 	};
 }

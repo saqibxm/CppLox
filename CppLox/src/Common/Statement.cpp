@@ -8,9 +8,9 @@ stmt::Expression::Expression(Expr &&expr)
 {
 }
 
-std::any lox::stmt::Expression::accept(Visitor &visitor)
+void lox::stmt::Expression::accept(Visitor &visitor)
 {
-	return visitor.visit(*this);
+	visitor.visit(*this);
 }
 
 Print::Print(Expr &&expr)
@@ -18,7 +18,17 @@ Print::Print(Expr &&expr)
 {
 }
 
-std::any lox::stmt::Print::accept(Visitor &visitor)
+void lox::stmt::Print::accept(Visitor &visitor)
 {
-	return visitor.visit(*this);
+	visitor.visit(*this);
+}
+
+lox::stmt::Var::Var(const Token &vname, Expr &&init)
+	: name(vname), initializer(std::move(init))
+{
+}
+
+void lox::stmt::Var::accept(Visitor &visitor)
+{
+	visitor.visit(*this);
 }

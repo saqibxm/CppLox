@@ -4,25 +4,14 @@
 #include "Common/Statement.hpp"
 #include "Common/Visitor.hpp"
 #include "Diagnostics/Diagnostics.hpp"
+#include "Environment/Environment.hpp"
 
 namespace lox
 {
-	struct RuntimeError : public std::runtime_error
-	{
-		RuntimeError(const Token &tok, const std::string &msg)
-			: runtime_error(msg), token(tok)
-		{
-			;
-		}
-
-		Token token;
-	};
-
 	class Interpreter : public expr::Visitor, public stmt::Visitor
 	{
 	public:
 		void Interpret(const StatementList&);
-
 
 		std::any visit(const expr::Binary&) override;
 		std::any visit(const expr::Unary&) override;
@@ -30,11 +19,14 @@ namespace lox
 		std::any visit(const expr::Grouping&) override;
 		std::any visit(const expr::Operator&) override;
 		std::any visit(const expr::Value&) override;
+		std::any visit(const expr::Variable&) override;
 
-		std::any visit(stmt::Expression&) override;
-		std::any visit(stmt::Print&) override;
+		void visit(stmt::Expression&) override;
+		void visit(stmt::Print&) override;
+		void visit(stmt::Var&) override;
 
 	private:
+		Environment environment;
 		void execute(stmt::Statement&);
 		Literal evaluate(const expr::Expression&);
 

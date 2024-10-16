@@ -15,6 +15,26 @@ lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 	return *this;
 }
 
+lox::Stmt lox::Parser::declaration() try { // function try-block
+	if (match(TokenType::VAR)) return variable_decl();
+	return statement();
+} catch (const ParseError&) {
+	synchronize();
+	return nullptr;
+}
+
+lox::Stmt lox::Parser::variable_decl()
+{
+	Token name = consume(TokenType::IDENTIFIER, "Expected an identifier in variable declaration.");
+	Expr initializer = nullptr;
+	if (match(TokenType::EQUAL))
+	{
+		initializer = expression();
+	}
+	consume(TokenType::SCOLON, "Expected ';' after variable declaration.");
+	return Stmt(new stmt::Var(name, std::move(initializer)));
+}
+
 lox::Stmt lox::Parser::statement()
 {
 	if (match(TokenType::PRINT)) return print_statement();
@@ -147,6 +167,7 @@ lox::Expr lox::Parser::primary()
 	if (match(TokenType::NUL)) return Expr(new Value(Literal::null));
 
 	if (match(TokenType::STRING, TokenType::NUMBER)) return Expr(new Value(previous().literal));
+	if (match(TokenType::IDENTIFIER)) return Expr(new expr::Variable(previous()));
 	if (match(TokenType::LPAREN))
 	{
 		Expr node = expression();

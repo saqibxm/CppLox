@@ -32,23 +32,7 @@ void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view
 	hasError = true;
 	++errorCount;
 
-	std::string severity = "[ERROR]";
-	std::string report = severity + " @ <" + std::to_string(line + 1) + ','
-		+ std::to_string(pos + 1) + "> : " + static_cast<std::string>(msg);
-
-	std::cerr << report << std::endl;
-
-	if (!hasSource) return;
-	std::string::size_type start = 0;
-	for (std::string::size_type i = line; i-- && (start = source.find('\n', start)) != std::string::npos; ++start);
-
-	auto current = source.find('\n');
-	auto lineInfo = "Line " + std::to_string(line + 1) + " | ";
-	auto lineStr = std::string(source, start, current - start);
-	auto fault = lineInfo + lineStr;
-
-	std::cerr << '\t' << fault << "\n\t";
-	indicate(std::cerr, fault, lineInfo.length(), pos) << '\n' << std::endl;
+	intenal_report(std::cerr, Type::ERROR, msg, {line, pos, 1});
 }
 
 void lox::Diagnostics::Error(std::size_t line, std::string_view msg)
@@ -73,7 +57,9 @@ void lox::Diagnostics::Error(Token token, const std::string &msg)
 		Error(token.get_line(), token.get_pos(), " at '" + token.lexeme + "' " + msg);
 	}
 	*/
-	Error(token.get_line(), token.get_pos(), msg);
+	++errorCount;
+	hasError = true;
+	intenal_report(std::cerr, Type::ERROR, msg, { token.get_line(), token.get_pos(), token.lexeme.length() });
 }
 
 void lox::Diagnostics::RuntimeError(const lox::RuntimeError &error)
@@ -203,3 +189,29 @@ std::pair<std::size_t, std::size_t> lox::Diagnostics::Count() const
 {
 	return std::make_pair(ErrorCount(), WarnCount());
 }
+
+
+/*
+void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view msg)
+{
+	hasError = true;
+	++errorCount;
+
+	std::string severity = "[ERROR]";
+	std::string report = severity + " @ <" + std::to_string(line + 1) + ','
+		+ std::to_string(pos + 1) + "> : " + static_cast<std::string>(msg);
+
+	std::cerr << report << std::endl;
+
+	if (!hasSource) return;
+	std::string::size_type start = 0;
+	for (std::string::size_type i = line; i-- && (start = source.find('\n', start)) != std::string::npos; ++start);
+
+	auto current = source.find('\n');
+	auto lineInfo = "Line " + std::to_string(line + 1) + " | ";
+	auto lineStr = std::string(source, start, current - start);
+	auto fault = lineInfo + lineStr;
+
+	std::cerr << '\t' << fault << "\n\t";
+	indicate(os, fault, lineInfo.length(), pos, len) << '\n' << std::endl;
+*/

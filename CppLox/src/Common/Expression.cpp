@@ -89,3 +89,13 @@ std::any expr::Conditional::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
+
+lox::expr::Variable::Variable(const Token &vname)
+	: name(vname)
+{
+}
+
+std::any lox::expr::Variable::accept(Visitor & visitor) const
+{
+	return visitor.visit(*this);
+}
