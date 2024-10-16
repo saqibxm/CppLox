@@ -56,7 +56,7 @@ void lox::Literal::set(bool b)
 void Literal::reset()
 {
 	// literal = Variant{};
-	*this = std::monostate{};
+	*this = nullptr;
 }
 
 /*

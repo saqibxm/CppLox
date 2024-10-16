@@ -20,8 +20,14 @@ operator -> "==" | "!=" | "<" | "<=" | ">" | ">="
  | "+" | "-" | "*" | "/" ;
 */
 
+struct lox::expr::Expression;
 
-namespace lox {
+namespace lox
+{
+	using Expr = std::unique_ptr<expr::Expression>;
+}
+
+namespace lox::expr {
 	struct Expression
 	{
 		virtual ~Expression() = default;
@@ -37,7 +43,6 @@ namespace lox {
 		virtual std::any accept_impl(std::any) const = 0;
 		*/
 	};
-	using Expr = std::unique_ptr<Expression>;
 
 	class Operator final : public Expression
 	{
@@ -108,6 +113,7 @@ namespace lox {
 		Literal value;
 	};
 }
+
 /*
 template <typename T,
 			typename X = std::enable_if_t<std::conjunction(std::negation(std::is_same_v<T, bool>), std::is_convertible_v<T, Operand>)>>

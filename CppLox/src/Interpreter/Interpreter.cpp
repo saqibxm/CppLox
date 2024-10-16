@@ -4,13 +4,12 @@
 
 #include "Interpreter/Interpreter.hpp"
 
-void lox::Interpreter::Interpret(const Expression &expression)
+void lox::Interpreter::Interpret(const StatementList &statements)
 {
 	try
 	{
-		Literal value = evaluate(expression);
-		std::cout << value.str() << std::endl;
-		// log the value here.
+		for (const Stmt &statement : statements)
+			execute(*statement);
 	}
 	catch (const lox::RuntimeError &error)
 	{
@@ -18,12 +17,12 @@ void lox::Interpreter::Interpret(const Expression &expression)
 	}
 }
 
-lox::Literal lox::Interpreter::evaluate(const Expression &expr)
+lox::Literal lox::Interpreter::evaluate(const expr::Expression &expr)
 {
 	return std::any_cast<const Literal&>(expr.accept(*this));
 }
 
-std::any lox::Interpreter::visit(const Binary &expr)
+std::any lox::Interpreter::visit(const expr::Binary &expr)
 {
 	auto left = evaluate(*expr.left);
 	auto right = evaluate(*expr.right);
@@ -81,12 +80,10 @@ std::any lox::Interpreter::visit(const Binary &expr)
 		break;
 
 	case TokenType::COMPARE:
-		check_number_operands(expr.operation, left, right);
 		return Literal{ are_equal(left, right) };
 		break;
 
 	case TokenType::NOT_EQUAL:
-		check_number_operands(expr.operation, left, right);
 		return Literal{ !are_equal(left, right) };
 
 	default:
@@ -97,7 +94,7 @@ std::any lox::Interpreter::visit(const Binary &expr)
 	return {};
 }
 
-std::any lox::Interpreter::visit(const Unary &expr)
+std::any lox::Interpreter::visit(const expr::Unary &expr)
 {
 	auto operand = evaluate(*expr.operand);
 	auto operation = expr.operation;
@@ -113,10 +110,10 @@ std::any lox::Interpreter::visit(const Unary &expr)
 		UNREACHABLE();
 	}
 
-	return Literal{}; // monostate default - no value
+	return Literal{}; // monostate/default - no value
 }
 
-std::any lox::Interpreter::visit(const Conditional &expr)
+std::any lox::Interpreter::visit(const expr::Conditional &expr)
 {
 	auto condition = evaluate(*expr.condition);
 	
@@ -126,26 +123,37 @@ std::any lox::Interpreter::visit(const Conditional &expr)
 	return Literal{"Not convertible to a boolean!"}; // temporary error signaling
 }
 
-std::any lox::Interpreter::visit(const Grouping &expr)
+std::any lox::Interpreter::visit(const expr::Grouping &expr)
 {
 	return evaluate(*expr.expression);
 }
 
-std::any lox::Interpreter::visit(const Operator &)
+std::any lox::Interpreter::visit(const expr::Operator &)
 {
 	return Literal{"Unused visitor!"};
 }
 
-std::any lox::Interpreter::visit(const Value &expr)
+std::any lox::Interpreter::visit(const expr::Value &expr)
 {
 	return expr.value;
 }
 
-lox::Operand lox::Interpreter::factorial(Operand num) //const
+std::any lox::Interpreter::visit(stmt::Expression &stmt)
 {
-	// coming up is an efficient algorithm, this is just a workaround for now
-	if (num <= 0.0) return num;
-	return num * factorial(num - 1);
+	evaluate(*stmt.expression);
+	return std::any();
+}
+
+std::any lox::Interpreter::visit(stmt::Print &stmt)
+{
+	Literal value = evaluate(*stmt.expression);
+	std::cout << value.str() << std::endl;
+	return std::any();
+}
+
+void lox::Interpreter::execute(stmt::Statement &stmt)
+{
+	stmt.accept(*this);
 }
 
 bool lox::Interpreter::is_true(const Literal &literal) //const

@@ -5,7 +5,8 @@
 
 #include "Common.h"
 #include "Token.hpp"
-#include "Expression.hpp"
+#include "Common/Expression.hpp"
+#include "Common/Statement.hpp"
 #include "Diagnostics/Diagnostics.hpp"
 
 // Follows this grammar
@@ -40,14 +41,24 @@ namespace lox {
 		Parser() : available(false) {}
 		Parser(const TokenQueue&);
 		Parser& operator=(const TokenQueue&);
-		Expr Parse() {
+
+		StatementList Parse() {
 			if (!available) throw std::invalid_argument("No tokens to parse.");
+
+			StatementList statements; statements.reserve(100);
+			try {
+				while (!at_end()) statements.push_back(statement());
+			}
+			catch (const ParseError&) {
+			}
+			return statements;
+			/*
 			try {
 				return expression();
 			}
 			catch (const ParseError &) {
 				return nullptr;
-			}
+			}*/
 		}
 
 	private:
@@ -69,6 +80,10 @@ namespace lox {
 		ParseError error(Token, const std::string&);
 		void synchronize();
 
+
+		Stmt statement();
+		Stmt print_statement();
+		Stmt expression_statement();
 		Expr expression() {
 			return conditional();
 		}
@@ -132,26 +147,5 @@ namespace lox {
 	{
 		diagnostics.Error(token, msg);
 		return ParseError("Encountered Parse Error");
-	}
-
-	inline void Parser::synchronize()
-	{
-		advance();
-		while (!at_end()) {
-			if (previous().type == TokenType::SCOLON) return;
-
-			switch (peek().type) {
-			case TokenType::CLASS:
-			case TokenType::FN:
-			case TokenType::VAR:
-			case TokenType::FOR:
-			case TokenType::IF:
-			case TokenType::WHILE:
-			case TokenType::PRINT:
-			case TokenType::RETURN:
-				return;
-			}
-			advance();
-		}
 	}
 }

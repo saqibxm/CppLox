@@ -1,9 +1,10 @@
 #include <sstream>
 
-#include "Parser/Expression.hpp"
-#include "Parser/Visitor.hpp"
+#include "Common/Expression.hpp"
+#include "Common/Visitor.hpp"
 
 using namespace lox;
+using namespace lox::expr;
 
 std::string lox::ASTPrinter::print(const Expression &expr)
 {
@@ -59,42 +60,42 @@ std::any ASTPrinter::visit(const Value &expr)
 
 /* vv XPrinter vv*/
 /*
-std::string lox::XPrinter::print(const Expression &expr) const
+std::string expr::XPrinter::print(const Expression &expr) const
 {
 	return expr.accept(*this);
 }
 
-std::string lox::XPrinter::visit(const Binary & exp) const
+std::string expr::XPrinter::visit(const Binary & exp) const
 {
 	return parenthesize(exp.operation.lexeme, *exp.left, *exp.right);
 }
 
-std::string lox::XPrinter::visit(const Unary & exp) const
+std::string expr::XPrinter::visit(const Unary & exp) const
 {
 	return parenthesize(exp.operation.lexeme, *exp.operand);
 }
 
-std::string lox::XPrinter::visit(const Conditional & exp) const
+std::string expr::XPrinter::visit(const Conditional & exp) const
 {
 	return parenthesize("conditional", *exp.condition, *exp.left, *exp.right);
 }
 
-std::string lox::XPrinter::visit(const Grouping & exp) const
+std::string expr::XPrinter::visit(const Grouping & exp) const
 {
 	return parenthesize("group", *exp.expression);
 }
 
-std::string lox::XPrinter::visit(const Operator & exp) const
+std::string expr::XPrinter::visit(const Operator & exp) const
 {
 	return exp.operation.lexeme;
 }
 
-std::string lox::XPrinter::visit(const Value & exp) const
+std::string expr::XPrinter::visit(const Value & exp) const
 {
 	return exp.value.empty() ? "nul" : exp.value.str();
 }
 
-std::string lox::XPrinter::add_space(const Expression &expr) const
+std::string expr::XPrinter::add_space(const Expression &expr) const
 {
 	return " " + print(expr);
 }

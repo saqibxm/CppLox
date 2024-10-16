@@ -1,7 +1,8 @@
-#include "Parser/RPNPrinter.hpp"
-#include "Parser/Expression.hpp"
+#include "Common/RPNPrinter.hpp"
+#include "Common/Expression.hpp"
 
 using namespace lox;
+using namespace lox::expr;
 
 std::string lox::RPNPrinter::print(const Expression &expr)
 {

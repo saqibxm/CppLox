@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Parser/Expression.hpp"
-#include "Parser/Visitor.hpp"
+#include "Common/Expression.hpp"
+#include "Common/Statement.hpp"
+#include "Common/Visitor.hpp"
 #include "Diagnostics/Diagnostics.hpp"
 
 namespace lox
@@ -17,21 +18,26 @@ namespace lox
 		Token token;
 	};
 
-	class Interpreter : public Visitor
+	class Interpreter : public expr::Visitor, public stmt::Visitor
 	{
 	public:
-		void Interpret(const Expression&);
+		void Interpret(const StatementList&);
 
-		Literal evaluate(const Expression&);
-		std::any visit(const Binary&) override;
-		std::any visit(const Unary&) override;
-		std::any visit(const Conditional&) override;
-		std::any visit(const Grouping&) override;
-		std::any visit(const Operator&) override;
-		std::any visit(const Value&) override;
+
+		std::any visit(const expr::Binary&) override;
+		std::any visit(const expr::Unary&) override;
+		std::any visit(const expr::Conditional&) override;
+		std::any visit(const expr::Grouping&) override;
+		std::any visit(const expr::Operator&) override;
+		std::any visit(const expr::Value&) override;
+
+		std::any visit(stmt::Expression&) override;
+		std::any visit(stmt::Print&) override;
 
 	private:
-		static Operand factorial(Operand);
+		void execute(stmt::Statement&);
+		Literal evaluate(const expr::Expression&);
+
 		static bool is_true(const Literal&);
 		static bool are_equal(const Literal&, const Literal&);
 		static bool equal_impl(const Literal&, const Literal&);

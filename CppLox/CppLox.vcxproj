@@ -148,26 +148,28 @@
   <ItemGroup>
     <ClCompile Include="Lox.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="src\Common\Statement.cpp" />
     <ClCompile Include="src\Diagnostics\Diagnostics.cpp" />
     <ClCompile Include="src\Interpreter\Interpreter.cpp" />
     <ClCompile Include="src\Lexer\Lexer.cpp" />
     <ClCompile Include="src\Literal.cpp" />
-    <ClCompile Include="src\Parser\Expression.cpp" />
+    <ClCompile Include="src\Common\Expression.cpp" />
     <ClCompile Include="src\Parser\Parser.cpp" />
-    <ClCompile Include="src\Parser\RPNPrinter.cpp" />
+    <ClCompile Include="src\Common\RPNPrinter.cpp" />
     <ClCompile Include="src\Token.cpp" />
-    <ClCompile Include="src\Parser\Visitor.cpp" />
+    <ClCompile Include="src\Common\Visitor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="include\Diagnostics\Diagnostics.hpp" />
     <ClInclude Include="include\Interpreter\Interpreter.hpp" />
+    <ClInclude Include="include\Common\Statement.hpp" />
     <ClInclude Include="include\Lexer\Lexer.hpp" />
     <ClInclude Include="include\Literal.hpp" />
-    <ClInclude Include="include\Parser\Expression.hpp" />
+    <ClInclude Include="include\Common\Expression.hpp" />
     <ClInclude Include="include\Parser\Parser.hpp" />
-    <ClInclude Include="include\Parser\RPNPrinter.hpp" />
-    <ClInclude Include="include\Parser\Visitor.hpp" />
+    <ClInclude Include="include\Common\RPNPrinter.hpp" />
+    <ClInclude Include="include\Common\Visitor.hpp" />
     <ClInclude Include="include\Token.hpp" />
     <ClInclude Include="Lox.hpp" />
   </ItemGroup>

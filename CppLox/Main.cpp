@@ -4,13 +4,14 @@
 #include "Lox.hpp"
 #include "Literal.hpp"
 
-#include "Parser/Visitor.hpp"
-#include "Parser/Expression.hpp"
+#include "Common/Visitor.hpp"
+#include "Common/Expression.hpp"
 #include "Diagnostics/Diagnostics.hpp"
 
-#include "Parser/RPNPrinter.hpp"
+#include "Common/RPNPrinter.hpp"
 
 using namespace lox;
+using namespace lox::expr;
 
 int main(int argc, char* argv[])
 {
@@ -19,9 +20,9 @@ int main(int argc, char* argv[])
 	lox::ASTPrinter ast;
 	lox::RPNPrinter rpn;
 
-	auto expr = new lox::Unary(lox::Expr(new lox::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
+	auto expr = new expr::Unary(lox::Expr(new expr::Value(3.14159265)), lox::Token(lox::TokenType::MINUS, "-", {}, 1));
 	auto expression = Expr(new Binary(
-		Expr(new lox::Unary(
+		Expr(new expr::Unary(
 			Expr(new Value(123.0)),
 			Token(TokenType::MINUS, "-", {}, 1))),
 		Token(TokenType::ASTERISK, "*", {}, 1),
@@ -29,9 +30,9 @@ int main(int argc, char* argv[])
 			Expr(new Value(45.67))))));
 
 	auto equation = Expr(
-		new Unary(
-		Expr(new Binary(
-			Expr(new Binary(Expr(new Value(1)), Token(TokenType::PLUS, "+", {}, 1), Expr(new Value(2)))),
+		new expr::Unary(
+		Expr(new expr::Binary(
+			Expr(new expr::Binary(Expr(new Value(1)), Token(TokenType::PLUS, "+", {}, 1), Expr(new Value(2)))),
 			Token(TokenType::ASTERISK, "*", {}, 1),
 			Expr(new Binary(Expr(new Value(4)), Token(TokenType::ASTERISK, "-", {}, 1), Expr(new Value(3))))
 		)),

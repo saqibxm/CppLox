@@ -53,6 +53,7 @@ public:
 	void Error(Token, const std::string&);
 
 	void RuntimeError(const lox::RuntimeError&);
+	void RuntimeError(const Literal&, const std::string&);
 
 	void Warn(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Warn(std::string_view msg, std::size_t line, std::size_t pos);

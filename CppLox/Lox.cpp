@@ -24,12 +24,12 @@ void lox::Run(const std::string &source)
 	auto tokens = lexer.Scan();
 	parser = tokens;
 
-	auto Expr = parser.Parse();
+	StatementList statements = parser.Parse();
 
 	if (diagnostics.HasError()) return;
-	interpreter.Interpret(*Expr);
+	interpreter.Interpret(statements);
 
-	std::cout << "AST: " << ASTPrinter().print(*Expr) << std::endl;
+	// std::cout << "AST: " << ASTPrinter().print(*Expr) << std::endl;
 }
 
 void lox::RunPrompt()

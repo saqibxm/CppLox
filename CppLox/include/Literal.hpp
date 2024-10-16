@@ -13,9 +13,9 @@ namespace lox {
 		return std::get<R>(variant);
 	}
 
-struct Literal : public std::variant<std::monostate, Operand, std::string, std::nullptr_t, bool>
+struct Literal : public std::variant<std::nullptr_t, Operand, std::string, bool>
 {
-	using Base = std::variant<std::monostate, Operand, std::string, std::nullptr_t, bool>;
+	using Base = std::variant<std::nullptr_t, Operand, std::string, bool>;
 	// using Base::variant;
 	using Base::variant;
 	static const Literal None;
@@ -60,7 +60,7 @@ struct Literal : public std::variant<std::monostate, Operand, std::string, std::
 	void set(std::nullptr_t);
 	void set(bool b);
 	void reset();
-	bool empty() const { return std::holds_alternative<std::monostate>(*this); }
+	bool empty() const { return std::holds_alternative<std::nullptr_t>(*this); }
 
 	std::string get_strliteral() const;
 	Operand get_number() const;

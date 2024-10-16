@@ -1,5 +1,7 @@
 #include "Parser/Parser.hpp"
 
+using namespace lox::expr;
+
 lox::Parser::Parser(const TokenQueue &toks)
 	: tokens(toks), available(true), current(0)
 {
@@ -11,6 +13,26 @@ lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 	available = true;
 	current = 0;
 	return *this;
+}
+
+lox::Stmt lox::Parser::statement()
+{
+	if (match(TokenType::PRINT)) return print_statement();
+	return expression_statement();
+}
+
+lox::Stmt lox::Parser::print_statement()
+{
+	Expr expr = expression();
+	consume(TokenType::SCOLON, "Expected a semicolon after value.");
+	return Stmt(new stmt::Print(std::move(expr)));
+}
+
+lox::Stmt lox::Parser::expression_statement()
+{
+	Expr expr = expression();
+	consume(TokenType::SCOLON, "Expected a terminating ';' at the end of statement.");
+	return Stmt(new stmt::Expression(std::move(expr)));
 }
 
 lox::Expr lox::Parser::conditional()
@@ -160,4 +182,25 @@ lox::Expr lox::Parser::primary()
 		// || oper == TokenType::ASTERISK || oper == TokenType::SLASH);
 	throw error(peek(), "Expected an expression!");
 	return nullptr;
+}
+
+void lox::Parser::synchronize()
+{
+	advance();
+	while (!at_end()) {
+		if (previous().type == TokenType::SCOLON) return;
+
+		switch (peek().type) {
+		case TokenType::CLASS:
+		case TokenType::FN:
+		case TokenType::VAR:
+		case TokenType::FOR:
+		case TokenType::IF:
+		case TokenType::WHILE:
+		case TokenType::PRINT:
+		case TokenType::RETURN:
+			return;
+		}
+		advance();
+	}
 }
