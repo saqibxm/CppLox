@@ -15,13 +15,14 @@ lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 	return *this;
 }
 
-lox::Stmt lox::Parser::declaration() try { // function try-block
+lox::Stmt lox::Parser::declaration() try {
 	if (match(TokenType::VAR)) return variable_decl();
+	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
 	return statement();
 } catch (const ParseError&) {
 	synchronize();
 	return nullptr;
-}
+}  // function try-block
 
 lox::Stmt lox::Parser::variable_decl()
 {
@@ -55,6 +56,18 @@ lox::Stmt lox::Parser::expression_statement()
 	return Stmt(new stmt::Expression(std::move(expr)));
 }
 
+lox::StatementList lox::Parser::block()
+{
+	StatementList statements;
+
+	while (!check(TokenType::RBRACE) && !at_end())
+	{
+		statements.push_back(declaration());
+	}
+	consume(TokenType::RBRACE, "A corresponding '}' is required to close the block.");
+	return statements;
+}
+
 lox::Expr lox::Parser::assignment()
 {
 	Expr exp = conditional();
@@ -65,8 +78,7 @@ lox::Expr lox::Parser::assignment()
 
 		if (auto ptr = dynamic_cast<expr::Variable*>(exp.get())) // if the last left hand of the equal was a variable
 			return Expr(new expr::Assign(ptr->name, std::move(value)));
-		else
-			error(equals, "Expected an identifier on left hand of assignment.");
+		else error(equals, "Expected an identifier on left hand of assignment.");
 	}
 	return exp;
 }
@@ -184,6 +196,7 @@ lox::Expr lox::Parser::primary()
 
 	if (match(TokenType::STRING, TokenType::NUMBER)) return Expr(new Value(previous().literal));
 	if (match(TokenType::IDENTIFIER)) return Expr(new expr::Variable(previous()));
+	if (match(TokenType::SCOLON)) return nullptr; // stray semicolon
 	if (match(TokenType::LPAREN))
 	{
 		Expr node = expression();

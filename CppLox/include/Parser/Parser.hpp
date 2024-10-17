@@ -84,6 +84,7 @@ namespace lox {
 		Stmt statement();
 		Stmt print_statement();
 		Stmt expression_statement();
+		StatementList block();
 
 		Expr expression() {
 			return assignment();

@@ -11,6 +11,7 @@ namespace lox
 	class Interpreter : public expr::Visitor, public stmt::Visitor
 	{
 	public:
+		Interpreter() : environment(new Environment) {}
 		void Interpret(const StatementList&);
 
 		std::any visit(const expr::Binary&) override;
@@ -22,13 +23,16 @@ namespace lox
 		std::any visit(const expr::Variable&) override;
 		std::any visit(const expr::Assign&) override;
 
-		void visit(stmt::Expression&) override;
-		void visit(stmt::Print&) override;
-		void visit(stmt::Var&) override;
+		void visit(const stmt::Expression&) override;
+		void visit(const stmt::Print&) override;
+		void visit(const stmt::Var&) override;
+		void visit(const stmt::Block&) override;
 
 	private:
-		Environment environment;
-		void execute(stmt::Statement&);
+		Environment::Ptr environment;
+
+		void execute(const stmt::Statement&);
+		void execute_block(const StatementList& list, Environment::Ptr env);
 		Literal evaluate(const expr::Expression&);
 
 		static bool is_true(const Literal&);

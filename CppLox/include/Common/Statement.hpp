@@ -4,10 +4,17 @@
 
 /*
 program -> declaration* EOF ;
+
 declaration -> varDecl | statement ;
+
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-statement -> expressionStmt | printStmt ;
+
+statement -> expressionStmt| printStmt | block ;
+
+block -> "{" declaration* "}" ;
+
 expressionStmt -> expression ";" ;
+
 printStmt -> "print" expressionStmt ;
 */
 
@@ -24,24 +31,24 @@ namespace lox::stmt
 	struct Statement
 	{
 		virtual ~Statement() = default;
-		virtual void accept(Visitor&) = 0;
+		virtual void accept(Visitor&) const = 0;
 	};
 
-	class Expression : public Statement
+	class Expression final : public Statement
 	{
 	public:
 		Expression(Expr&&);
 		Expr expression;
-		void accept(Visitor&) override;
+		void accept(Visitor&) const override;
 	};
 
-	class Print : public Statement
+	class Print final : public Statement
 	{
 	public:
 		Print(Expr&&);
 		Expr expression;
 
-		void accept(Visitor&) override;
+		void accept(Visitor&) const override;
 	};
 
 	class Var : public Statement
@@ -49,9 +56,18 @@ namespace lox::stmt
 	public:
 		Var(const Token&, Expr&&);
 
-		void accept(Visitor&) override;
+		void accept(Visitor&) const override;
 
 		Token name;
 		Expr initializer;
+	};
+
+	class Block final : public Statement
+	{
+	public:
+		Block(StatementList&&);
+		void accept(Visitor&) const override;
+
+		StatementList statements;
 	};
 }

@@ -140,38 +140,76 @@ std::any lox::Interpreter::visit(const expr::Value &expr)
 
 std::any lox::Interpreter::visit(const expr::Variable &expr)
 {
-	return environment.retrieve(expr.name);
+	return environment->retrieve(expr.name);
 }
 
 std::any lox::Interpreter::visit(const expr::Assign &expr)
 {
 	auto value = evaluate(*expr.value);
-	environment.assign(expr.name, value);
+	environment->assign(expr.name, value);
 	return value; // return the right side of the assignment
 }
 
-void lox::Interpreter::visit(stmt::Expression &stmt)
+void lox::Interpreter::visit(const stmt::Expression &stmt)
 {
 	evaluate(*stmt.expression);
 }
 
-void lox::Interpreter::visit(stmt::Print &stmt)
+void lox::Interpreter::visit(const stmt::Print &stmt)
 {
 	Literal value = evaluate(*stmt.expression);
 	std::cout << value.str() << std::endl;
 }
 
-void lox::Interpreter::visit(stmt::Var &stmt)
+void lox::Interpreter::visit(const stmt::Var &stmt)
 {
 	Literal init; // default init to null
 	if (stmt.initializer != nullptr) init = evaluate(*stmt.initializer);
 
-	environment.define(stmt.name.lexeme, init);
+	environment->define(stmt.name.lexeme, init);
 }
 
-void lox::Interpreter::execute(stmt::Statement &stmt)
+void lox::Interpreter::visit(const stmt::Block &stmt)
+{
+	Environment::Ptr scope = std::make_shared<Environment>(environment->shared_from_this());
+	execute_block(stmt.statements, scope);
+}
+
+void lox::Interpreter::execute(const stmt::Statement &stmt)
 {
 	stmt.accept(*this);
+}
+
+void lox::Interpreter::execute_block(const StatementList & list, Environment::Ptr env)
+{
+	struct ScopedAssignment
+	{
+		ScopedAssignment(Environment &target, Environment &replacement)
+			: target(target), previous(target)
+		{
+			target = replacement;
+		}
+		~ScopedAssignment()
+		{
+			target = previous;
+		}
+		Environment previous;
+		Environment& target;
+	}; //current(environment, env); // replace interpreter environment with the block scope env, save copy of the original
+	// and replace it with original at the end
+
+	// environment = env;
+	// for (const Stmt &statement : list) execute(*statement);
+
+	Environment::Ptr previous = this->environment;
+	try {
+		environment = env;
+		for (const Stmt &statement : list) execute(*statement);
+	}
+	catch (const lox::RuntimeError&)
+	{
+	}
+	this->environment = previous;
 }
 
 bool lox::Interpreter::is_true(const Literal &literal) //const

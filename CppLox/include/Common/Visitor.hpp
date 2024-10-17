@@ -37,12 +37,14 @@ namespace lox::stmt
 	class Expression;
 	class Print;
 	class Var;
+	class Block;
 
 	struct Visitor
 	{
-		virtual void visit(Expression&) = 0;
-		virtual void visit(Print&) = 0;
-		virtual void visit(Var&) = 0;
+		virtual void visit(const Expression&) = 0;
+		virtual void visit(const Print&) = 0;
+		virtual void visit(const Var&) = 0;
+		virtual void visit(const Block&) = 0;
 	};
 }
 

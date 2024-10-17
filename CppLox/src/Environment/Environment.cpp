@@ -18,6 +18,39 @@ void lox::Environment::assign(const Token & name, const Object & val)
 	set(name, val);
 }
 
+void lox::Environment::reserve(Storage::size_type n)
+{
+	values.reserve(n);
+}
+
+lox::Object lox::Environment::get(const Token & name)
+{
+	// choices are to indicate syntax error, throw runtime error (used) return null.
+	auto iter = values.find(name.lexeme);
+	if (iter == values.end())
+	{
+		if(!enclosing)
+			throw RuntimeError(name, '\"' + name.lexeme + "\" identifier not found, undefined variable.");
+		else return enclosing->get(name);
+	}
+	return iter->second;
+}
+
+void lox::Environment::set(const Token & name, const Object & val)
+{
+	auto it = values.find(name.lexeme);
+	if (it == values.end())
+	{
+		if(!enclosing)
+		throw lox::RuntimeError(name, "Identifier \'" + name.lexeme + "\' is not defined.");
+
+		enclosing->set(name, val);
+	}
+	it->second = val;
+}
+
+
+/*
 lox::Object lox::Environment::get(const Token & name)
 {
 	// choices are to indicate syntax error, throw runtime error (used) return null.
@@ -32,3 +65,5 @@ void lox::Environment::set(const Token & name, const Object & val)
 	if (it == values.end()) throw lox::RuntimeError(name, "Identifier \'" + name.lexeme + "\' is not defined.");
 	it->second = val;
 }
+
+*/
