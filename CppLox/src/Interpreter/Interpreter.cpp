@@ -184,7 +184,7 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 {
 	struct ScopedAssignment
 	{
-		ScopedAssignment(Environment &target, Environment &replacement)
+		ScopedAssignment(Environment::Ptr &target, Environment::Ptr &replacement)
 			: target(target), previous(target)
 		{
 			target = replacement;
@@ -193,14 +193,14 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 		{
 			target = previous;
 		}
-		Environment previous;
-		Environment& target;
-	}; //current(environment, env); // replace interpreter environment with the block scope env, save copy of the original
+		Environment::Ptr previous;
+		Environment::Ptr& target;
+	} current(environment, env); // replace interpreter environment with the block scope env, save copy of the original
 	// and replace it with original at the end
 
-	// environment = env;
-	// for (const Stmt &statement : list) execute(*statement);
-
+	environment = env;
+	for (const Stmt &statement : list) execute(*statement);
+	/*
 	Environment::Ptr previous = this->environment;
 	try {
 		environment = env;
@@ -210,6 +210,7 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 	{
 	}
 	this->environment = previous;
+	*/
 }
 
 bool lox::Interpreter::is_true(const Literal &literal) //const
