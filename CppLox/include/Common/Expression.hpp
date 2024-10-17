@@ -122,6 +122,17 @@ namespace lox::expr {
 
 		Token name;
 	};
+
+	class Assign final : public Expression
+	{
+	public:
+		Assign(const Token &vname, Expr &&val);
+
+		std::any accept(Visitor &visitor) const override;
+
+		Token name;
+		Expr value;
+	};
 }
 
 /*

@@ -138,9 +138,16 @@ std::any lox::Interpreter::visit(const expr::Value &expr)
 	return expr.value;
 }
 
-std::any lox::Interpreter::visit(const expr::Variable &exp)
+std::any lox::Interpreter::visit(const expr::Variable &expr)
 {
-	return environment.get(exp.name);
+	return environment.retrieve(expr.name);
+}
+
+std::any lox::Interpreter::visit(const expr::Assign &expr)
+{
+	auto value = evaluate(*expr.value);
+	environment.assign(expr.name, value);
+	return value; // return the right side of the assignment
 }
 
 void lox::Interpreter::visit(stmt::Expression &stmt)

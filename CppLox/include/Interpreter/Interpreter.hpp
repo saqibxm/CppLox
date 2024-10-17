@@ -20,6 +20,7 @@ namespace lox
 		std::any visit(const expr::Operator&) override;
 		std::any visit(const expr::Value&) override;
 		std::any visit(const expr::Variable&) override;
+		std::any visit(const expr::Assign&) override;
 
 		void visit(stmt::Expression&) override;
 		void visit(stmt::Print&) override;

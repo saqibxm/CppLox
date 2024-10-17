@@ -8,10 +8,27 @@ void lox::Environment::define(const std::string &name, const Object &init)
 	values[name] = init;
 }
 
+lox::Object lox::Environment::retrieve(const Token & name)
+{
+	return get(name);
+}
+
+void lox::Environment::assign(const Token & name, const Object & val)
+{
+	set(name, val);
+}
+
 lox::Object lox::Environment::get(const Token & name)
 {
 	// choices are to indicate syntax error, throw runtime error (used) return null.
 	auto iter = values.find(name.lexeme);
 	if (iter == values.end()) throw RuntimeError(name, '\"' + name.lexeme + "\" identifier not found, undefined variable.");
 	return iter->second;
+}
+
+void lox::Environment::set(const Token & name, const Object & val)
+{
+	auto it = values.find(name.lexeme);
+	if (it == values.end()) throw lox::RuntimeError(name, "Identifier \'" + name.lexeme + "\' is not defined.");
+	it->second = val;
 }

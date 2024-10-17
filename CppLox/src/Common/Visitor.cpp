@@ -63,6 +63,11 @@ std::any lox::ASTPrinter::visit(const expr::Variable &expr)
 	return "var: " + expr.name.lexeme;
 }
 
+std::any lox::ASTPrinter::visit(const expr::Assign &exp)
+{
+	return parenthesize(exp.name.lexeme + " =", *exp.value);
+}
+
 /* vv XPrinter vv*/
 /*
 std::string expr::XPrinter::print(const Expression &expr) const

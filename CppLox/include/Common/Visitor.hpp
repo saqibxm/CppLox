@@ -15,6 +15,7 @@ namespace lox::expr
 	class Operator;
 	class Value;
 	class Variable;
+	class Assign;
 
 	struct Visitor
 	{
@@ -26,6 +27,7 @@ namespace lox::expr
 		virtual std::any visit(const Operator&) = 0;
 		virtual std::any visit(const Value&) = 0;
 		virtual std::any visit(const Variable&) = 0;
+		virtual std::any visit(const Assign&) = 0;
 	};
 }
 
@@ -57,6 +59,7 @@ namespace lox
 		std::any visit(const expr::Operator&) override;
 		std::any visit(const expr::Value&) override;
 		std::any visit(const expr::Variable&) override;
+		std::any visit(const expr::Assign&) override;
 
 	private:
 		template <typename...Args>

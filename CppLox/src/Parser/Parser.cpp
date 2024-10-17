@@ -55,6 +55,22 @@ lox::Stmt lox::Parser::expression_statement()
 	return Stmt(new stmt::Expression(std::move(expr)));
 }
 
+lox::Expr lox::Parser::assignment()
+{
+	Expr exp = conditional();
+	if (match(TokenType::EQUAL))
+	{
+		const Token equals = previous();
+		Expr value = assignment(); // chained assignment, a = b = c = 1;
+
+		if (auto ptr = dynamic_cast<expr::Variable*>(exp.get())) // if the last left hand of the equal was a variable
+			return Expr(new expr::Assign(ptr->name, std::move(value)));
+		else
+			error(equals, "Expected an identifier on left hand of assignment.");
+	}
+	return exp;
+}
+
 lox::Expr lox::Parser::conditional()
 {
 	Expr expr = separation();

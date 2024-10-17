@@ -13,6 +13,8 @@
 // Conditional operator: left most side has highest precedence, middle has lowest.
 /*
 expression -> conditional ;
+assignment -> IDENTIFIER "=" expression
+	| conditional ;
 conditional -> separation ( "?" expression : conditional )? ; // refer to cppref C conditonal operator
 separation -> equality ( "," equality )* ;
 equality -> comparison ( ( "!=" | "==" ) comparison )* ;
@@ -20,10 +22,10 @@ comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term -> factor ( ( "-" | "+" ) factor )* ;
 factor -> unary ( ( "/" | "*" ) unary )* ;
 unary -> ( "!" | "-" | "--" | "++") unary
- | postfix ;
+	| postfix ;
 postfix -> primary ( "++" | "--" )? ; // prefix has same precedence as unary while postfix has higher
 primary -> NUMBER | STRING | IDENTIFIER | "true" | "false" | "nil" ;
- | "(" expression ")" ;
+	| "(" expression ")" ;
 */
 
 namespace lox {
@@ -84,8 +86,9 @@ namespace lox {
 		Stmt expression_statement();
 
 		Expr expression() {
-			return conditional();
+			return assignment();
 		}
+		Expr assignment();
 		Expr conditional();
 		Expr separation();
 		Expr equality();

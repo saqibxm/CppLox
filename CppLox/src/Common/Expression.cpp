@@ -99,3 +99,13 @@ std::any lox::expr::Variable::accept(Visitor & visitor) const
 {
 	return visitor.visit(*this);
 }
+
+lox::expr::Assign::Assign(const Token & vname, Expr && val)
+	: name(vname), value(std::move(val))
+{
+}
+
+std::any lox::expr::Assign::accept(Visitor & visitor) const
+{
+	return visitor.visit(*this);
+}
