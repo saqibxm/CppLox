@@ -8,7 +8,7 @@
 
 namespace lox
 {
-	class Interpreter : public expr::Visitor, public stmt::Visitor
+	class Interpreter : public ExprVisitor, public StmtVisitor
 	{
 	public:
 		Interpreter() : environment(new Environment) {}

@@ -12,6 +12,15 @@
 // Follows this grammar
 // Conditional operator: left most side has highest precedence, middle has lowest.
 /*
+program -> declaration* EOF ;
+declaration -> varDecl | statement ;
+varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
+statement -> expressionStmt| printStmt | block | ifStmt ;
+block -> "{" declaration* "}" ;
+expressionStmt -> expression ";" ;
+printStmt -> "print" expressionStmt ;
+*/
+/*
 expression -> conditional ;
 assignment -> IDENTIFIER "=" expression
 	| conditional ;

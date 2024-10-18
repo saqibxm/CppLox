@@ -8,12 +8,12 @@ expr::Binary::Binary(Expr lhs, Token op, Expr rhs)
 }
 
 /*
-std::any expr::Binary::accept(Visitor<std::any> visitor) const
+std::any expr::Binary::accept(ExprVisitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any expr::Binary::accept(Visitor & visitor) const
+std::any expr::Binary::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -24,12 +24,12 @@ expr::Unary::Unary(Expr exp, Token op)
 }
 
 /*
-std::any expr::Unary::accept(Visitor<std::any> visitor) const
+std::any expr::Unary::accept(ExprVisitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any expr::Unary::accept(Visitor & visitor) const
+std::any expr::Unary::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -39,12 +39,12 @@ expr::Grouping::Grouping(Expr exp)
 {
 }
 
-/*std::any expr::Grouping::accept(Visitor<std::any> visitor) const
+/*std::any expr::Grouping::accept(ExprVisitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any expr::Grouping::accept(Visitor & visitor) const
+std::any expr::Grouping::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -54,12 +54,12 @@ expr::Operator::Operator(Token op)
 {
 }
 
-/*std::any expr::Operator::accept(Visitor<std::any> visitor) const
+/*std::any expr::Operator::accept(ExprVisitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any expr::Operator::accept(Visitor & visitor) const
+std::any expr::Operator::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -69,12 +69,12 @@ expr::Value::Value(Literal val)
 {
 }
 
-/*std::any expr::Value::accept(Visitor<std::any> visitor) const
+/*std::any expr::Value::accept(ExprVisitor<std::any> visitor) const
 {
 	return visitor.visit(*this);
 }*/
 
-std::any expr::Value::accept(Visitor & visitor) const
+std::any expr::Value::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -85,7 +85,7 @@ expr::Conditional::Conditional(Expr cond, Expr lhs, Expr rhs)
 {
 }
 
-std::any expr::Conditional::accept(Visitor & visitor) const
+std::any expr::Conditional::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -95,7 +95,7 @@ lox::expr::Variable::Variable(const Token &vname)
 {
 }
 
-std::any lox::expr::Variable::accept(Visitor & visitor) const
+std::any lox::expr::Variable::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
@@ -105,7 +105,7 @@ lox::expr::Assign::Assign(const Token & vname, Expr && val)
 {
 }
 
-std::any lox::expr::Assign::accept(Visitor & visitor) const
+std::any lox::expr::Assign::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }

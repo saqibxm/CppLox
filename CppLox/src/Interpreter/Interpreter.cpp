@@ -171,7 +171,7 @@ void lox::Interpreter::visit(const stmt::Var &stmt)
 
 void lox::Interpreter::visit(const stmt::Block &stmt)
 {
-	Environment::Ptr scope = std::make_shared<Environment>(environment->shared_from_this());
+	Environment::Ptr scope = std::make_shared<Environment>(environment); // environment->shared_from_this()
 	execute_block(stmt.statements, scope);
 }
 
@@ -198,7 +198,6 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 	} current(environment, env); // replace interpreter environment with the block scope env, save copy of the original
 	// and replace it with original at the end
 
-	environment = env;
 	for (const Stmt &statement : list) execute(*statement);
 	/*
 	Environment::Ptr previous = this->environment;

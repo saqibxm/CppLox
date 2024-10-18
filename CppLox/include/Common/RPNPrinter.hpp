@@ -3,7 +3,7 @@
 #include "Visitor.hpp"
 
 namespace lox {
-	class RPNPrinter : public expr::Visitor
+	class RPNPrinter : public ExprVisitor
 	{
 	public:
 		std::string print(const expr::Expression&);

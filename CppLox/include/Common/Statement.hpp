@@ -2,24 +2,9 @@
 
 #include "Common/Expression.hpp"
 
-/*
-program -> declaration* EOF ;
-
-declaration -> varDecl | statement ;
-
-varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-
-statement -> expressionStmt| printStmt | block ;
-
-block -> "{" declaration* "}" ;
-
-expressionStmt -> expression ";" ;
-
-printStmt -> "print" expressionStmt ;
-*/
+// namespace lox::stmt { struct Statement; } // forward declared by visitor.hpp already
 
 namespace lox {
-
 	using Stmt = std::unique_ptr<stmt::Statement>;
 	using StatementList = std::vector<Stmt>;
 }
@@ -31,7 +16,7 @@ namespace lox::stmt
 	struct Statement
 	{
 		virtual ~Statement() = default;
-		virtual void accept(Visitor&) const = 0;
+		virtual void accept(StmtVisitor&) const = 0;
 	};
 
 	class Expression final : public Statement
@@ -39,7 +24,7 @@ namespace lox::stmt
 	public:
 		Expression(Expr&&);
 		Expr expression;
-		void accept(Visitor&) const override;
+		void accept(StmtVisitor&) const override;
 	};
 
 	class Print final : public Statement
@@ -48,7 +33,7 @@ namespace lox::stmt
 		Print(Expr&&);
 		Expr expression;
 
-		void accept(Visitor&) const override;
+		void accept(StmtVisitor&) const override;
 	};
 
 	class Var : public Statement
@@ -56,7 +41,7 @@ namespace lox::stmt
 	public:
 		Var(const Token&, Expr&&);
 
-		void accept(Visitor&) const override;
+		void accept(StmtVisitor&) const override;
 
 		Token name;
 		Expr initializer;
@@ -66,7 +51,7 @@ namespace lox::stmt
 	{
 	public:
 		Block(StatementList&&);
-		void accept(Visitor&) const override;
+		void accept(StmtVisitor&) const override;
 
 		StatementList statements;
 	};

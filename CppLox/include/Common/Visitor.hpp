@@ -16,19 +16,6 @@ namespace lox::expr
 	class Value;
 	class Variable;
 	class Assign;
-
-	struct Visitor
-	{
-		// Static visitor functions
-		virtual std::any visit(const Binary&) = 0;
-		virtual std::any visit(const Unary&) = 0;
-		virtual std::any visit(const Conditional&) = 0;
-		virtual std::any visit(const Grouping&) = 0;
-		virtual std::any visit(const Operator&) = 0;
-		virtual std::any visit(const Value&) = 0;
-		virtual std::any visit(const Variable&) = 0;
-		virtual std::any visit(const Assign&) = 0;
-	};
 }
 
 namespace lox::stmt
@@ -38,19 +25,32 @@ namespace lox::stmt
 	class Print;
 	class Var;
 	class Block;
-
-	struct Visitor
-	{
-		virtual void visit(const Expression&) = 0;
-		virtual void visit(const Print&) = 0;
-		virtual void visit(const Var&) = 0;
-		virtual void visit(const Block&) = 0;
-	};
 }
 
 namespace lox
 {
-	class ASTPrinter : public expr::Visitor
+	struct ExprVisitor
+	{
+		// Static visitor functions
+		virtual std::any visit(const expr::Binary&) = 0;
+		virtual std::any visit(const expr::Unary&) = 0;
+		virtual std::any visit(const expr::Conditional&) = 0;
+		virtual std::any visit(const expr::Grouping&) = 0;
+		virtual std::any visit(const expr::Operator&) = 0;
+		virtual std::any visit(const expr::Value&) = 0;
+		virtual std::any visit(const expr::Variable&) = 0;
+		virtual std::any visit(const expr::Assign&) = 0;
+	};
+
+	struct StmtVisitor
+	{
+		virtual void visit(const stmt::Expression&) = 0;
+		virtual void visit(const stmt::Print&) = 0;
+		virtual void visit(const stmt::Var&) = 0;
+		virtual void visit(const stmt::Block&) = 0;
+	};
+
+	class ASTPrinter : public ExprVisitor
 	{
 	public:
 		std::string print(const expr::Expression&);
