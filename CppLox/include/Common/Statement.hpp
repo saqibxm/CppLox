@@ -55,4 +55,15 @@ namespace lox::stmt
 
 		StatementList statements;
 	};
+
+	class IfControl final : public Statement
+	{
+	public:
+		IfControl(Expr&&, Stmt&&, Stmt&&);
+		void accept(StmtVisitor&) const override;
+
+		Expr condition;
+		Stmt then_stmt;
+		Stmt else_stmt;
+	};
 }

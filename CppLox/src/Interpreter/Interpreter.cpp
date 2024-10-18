@@ -103,9 +103,19 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 	{
 	case TokenType::NOT:
 		return Literal{ std::logical_not<>()(is_true(operand)) };
+
 	case TokenType::MINUS:
 		validate_number(operation, operand);
 		return Literal{ std::negate<>()(std::get<Operand>(operand)) };
+
+	case TokenType::DOUBLE_PLUS: // incomplete
+		validate_number(operation, operand);
+		return Literal(std::get<Operand>(operand) + 1);
+
+	case TokenType::DOUBLE_MINUS:
+		validate_number(operation, operand);
+		return Literal{ std::get<Operand>(operand) - 1 };
+
 	default:
 		UNREACHABLE();
 	}
@@ -173,6 +183,14 @@ void lox::Interpreter::visit(const stmt::Block &stmt)
 {
 	Environment::Ptr scope = std::make_shared<Environment>(environment); // environment->shared_from_this()
 	execute_block(stmt.statements, scope);
+}
+
+void lox::Interpreter::visit(const stmt::IfControl &stmt)
+{
+	auto condition = evaluate(*stmt.condition);
+
+	if (is_true(condition)) execute(*stmt.then_stmt);
+	else if(stmt.else_stmt != nullptr) execute(*stmt.else_stmt);
 }
 
 void lox::Interpreter::execute(const stmt::Statement &stmt)

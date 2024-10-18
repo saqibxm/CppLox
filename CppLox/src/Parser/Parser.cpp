@@ -38,6 +38,7 @@ lox::Stmt lox::Parser::variable_decl()
 
 lox::Stmt lox::Parser::statement()
 {
+	if (match(TokenType::IF)) return if_statement();
 	if (match(TokenType::PRINT)) return print_statement();
 	return expression_statement();
 }
@@ -54,6 +55,20 @@ lox::Stmt lox::Parser::expression_statement()
 	Expr expr = expression();
 	consume(TokenType::SCOLON, "Expected a terminating ';' at the end of statement.");
 	return Stmt(new stmt::Expression(std::move(expr)));
+}
+
+lox::Stmt lox::Parser::if_statement()
+{
+	consume(TokenType::LPAREN, "Expected opening parentheses '(' after if.");
+	Expr condition = expression();
+	consume(TokenType::RPAREN, "Closing parentheses ')' required after condition.");
+	Stmt then_branch = statement();
+
+	Stmt else_branch = nullptr;
+	if (match(TokenType::ELSE))
+		else_branch = statement();
+
+	return Stmt(new stmt::IfControl(std::move(condition), std::move(then_branch), std::move(else_branch)));
 }
 
 lox::StatementList lox::Parser::block()
@@ -180,7 +195,7 @@ lox::Expr lox::Parser::unary()
 lox::Expr lox::Parser::secondary()
 {
 	Expr expr = primary();
-	if (match(TokenType::DOUBLE_MINUS, TokenType::DOUBLE_PLUS))
+	while (match(TokenType::DOUBLE_MINUS, TokenType::DOUBLE_PLUS))
 	{
 		const auto &oper = previous();
 		return Expr(new Unary(std::move(expr), oper));
@@ -190,13 +205,24 @@ lox::Expr lox::Parser::secondary()
 
 lox::Expr lox::Parser::primary()
 {
+	//if (check(TokenType::SCOLON))
+	//{
+	//	int count = 0;
+	//	for (auto i = current; current < tokens.size(); ++i)
+	//	{
+	//		if (tokens[i].type == TokenType::SCOLON) ++i;
+	//		else break;
+	//	}
+	//	while (count > 1) advance(), --count; // stray semicolon
+	//	return nullptr;
+	//}
+
 	if (match(TokenType::TRUE)) return Expr(new Value(true));
 	if (match(TokenType::FALSE)) return Expr(new Value(false));
 	if (match(TokenType::NUL)) return Expr(new Value(Literal::null));
 
 	if (match(TokenType::STRING, TokenType::NUMBER)) return Expr(new Value(previous().literal));
 	if (match(TokenType::IDENTIFIER)) return Expr(new expr::Variable(previous()));
-	if (match(TokenType::SCOLON)) return nullptr; // stray semicolon
 	if (match(TokenType::LPAREN))
 	{
 		Expr node = expression();

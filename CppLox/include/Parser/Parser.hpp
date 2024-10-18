@@ -19,6 +19,7 @@ statement -> expressionStmt| printStmt | block | ifStmt ;
 block -> "{" declaration* "}" ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
+ifStmt -> if "(" expression ")" statement ( "else" statement )? ;
 */
 /*
 expression -> conditional ;
@@ -93,6 +94,7 @@ namespace lox {
 		Stmt statement();
 		Stmt print_statement();
 		Stmt expression_statement();
+		Stmt if_statement();
 		StatementList block();
 
 		Expr expression() {

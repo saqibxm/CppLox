@@ -42,3 +42,13 @@ void lox::stmt::Block::accept(StmtVisitor &visitor) const
 {
 	visitor.visit(*this);
 }
+
+lox::stmt::IfControl::IfControl(Expr &&cond, Stmt &&ifbody, Stmt &&elsebody)
+	: condition(std::move(cond)), then_stmt(std::move(ifbody)), else_stmt(std::move(elsebody))
+{
+}
+
+void lox::stmt::IfControl::accept(StmtVisitor &visitor) const
+{
+	visitor.visit(*this);
+}
