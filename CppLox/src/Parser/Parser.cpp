@@ -186,6 +186,7 @@ lox::Expr lox::Parser::unary()
 	{
 		const auto &oper = previous();
 		Expr right = unary();
+
 		return Expr(new Unary(std::move(right), oper));
 	}
 

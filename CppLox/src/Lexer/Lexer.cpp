@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cctype>
+#include <charconv>
 
 #include "Lexer/Lexer.hpp"
 
@@ -234,5 +235,21 @@ void lox::Lexer::number()
 		}
 	}
 	// the reason match method is abolished is because it consumes the character if found, that said { 123.to_string() } would be problematic
-	add_token(TokenType::NUMBER, Literal{ std::stod(source.substr(start, current - start)) });
+	Operand num;
+	[[maybe_unused]] auto [ptr, ec] = std::from_chars(source.c_str() + start, source.c_str() + current, num);
+	/*
+	switch (ec)
+	{
+	case std::errc::invalid_argument:
+		diagnostics.Error(line, start, "Invalid number format!");
+		return;
+	case std::errc::value_too_large:
+		diagnostics.Error(line, start, "Number literal is too long.");
+		return;
+	default:
+		break;
+	}
+	*/
+	add_token(TokenType::NUMBER, Literal{ num });
+	// add_token(TokenType::NUMBER, Literal{ std::stod(source.substr(start, current - start)) });
 }

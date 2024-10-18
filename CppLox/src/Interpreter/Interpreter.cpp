@@ -99,6 +99,9 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 	auto operand = evaluate(*expr.operand);
 	auto operation = expr.operation;
 
+	Operand net = 0.0;
+	bool flag = false;
+
 	switch (operation.type)
 	{
 	case TokenType::NOT:
@@ -108,18 +111,37 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 		validate_number(operation, operand);
 		return Literal{ std::negate<>()(std::get<Operand>(operand)) };
 
-	case TokenType::DOUBLE_PLUS: // incomplete
+	case TokenType::DOUBLE_PLUS: // incomplete, temporary
 		validate_number(operation, operand);
-		return Literal(std::get<Operand>(operand) + 1);
+		if (!flag) net = std::get<Operand>(operand), flag = true;
+		if (auto ptr = dynamic_cast<expr::Variable*>(expr.operand.get()))
+		{
+			environment->assign(ptr->name, ++net);
+			flag = false;
+		}
+		else ++net;
+		// else throw lox::RuntimeError(operation, "Operand to increment is not an L-value.");
+		// return Literal(std::get<Operand>(operand) + 1);
+		return Literal{ net };
 
 	case TokenType::DOUBLE_MINUS:
 		validate_number(operation, operand);
-		return Literal{ std::get<Operand>(operand) - 1 };
+		if (!flag) net = std::get<Operand>(operand), flag = true;
+
+		if (auto ptr = dynamic_cast<expr::Variable*>(expr.operand.get()))
+		{
+			environment->assign(ptr->name, --net);
+			flag = false;
+		}
+		else --net;
+		// else throw lox::RuntimeError(operation, "Operand to decrement is not an L-value.");
+		// return Literal{ std::get<Operand>(operand) - 1 };
+		return Literal{ net };
 
 	default:
 		UNREACHABLE();
 	}
-
+	// environment->assign(ptr->name, Literal{ ++std::get<Operand>(operand) });
 	return Literal{}; // monostate/default - no value
 }
 

@@ -13,9 +13,19 @@ lox::Object lox::Environment::retrieve(const Token & name)
 	return get(name);
 }
 
+lox::Object lox::Environment::retrieve(const Storage::key_type & name)
+{
+	return get(Token(TokenType::IDENTIFIER, name, {}, -1));
+}
+
 void lox::Environment::assign(const Token & name, const Object & val)
 {
 	set(name, val);
+}
+
+void lox::Environment::assign(const Storage::key_type & name, const Object & val)
+{
+	set(Token(TokenType::IDENTIFIER, name, {}, -1), val);
 }
 
 void lox::Environment::reserve(Storage::size_type n)

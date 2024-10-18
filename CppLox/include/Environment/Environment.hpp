@@ -18,11 +18,14 @@ namespace lox
 		using Ptr = std::shared_ptr<Environment>;
 		Environment() : enclosing(nullptr) {}
 		Environment(Ptr outer) : enclosing(outer) {}
-		// Environment(const Environment &obj) : enclosing(obj.enclosing) {}
 
 		void define(const std::string &name, const Object &init);
+
 		Object retrieve(const Token &name);
+		Object retrieve(const Storage::key_type &name);
+
 		void assign(const Token &name, const Object &val);
+		void assign(const Storage::key_type &name, const Object &val);
 
 		// Object get(std::string_view name);
 		// void set(std::string_view name);
