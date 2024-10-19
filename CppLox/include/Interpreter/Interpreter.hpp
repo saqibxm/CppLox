@@ -22,6 +22,7 @@ namespace lox
 		std::any visit(const expr::Value&) override;
 		std::any visit(const expr::Variable&) override;
 		std::any visit(const expr::Assign&) override;
+		std::any visit(const expr::Logical&) override;
 
 		void visit(const stmt::Expression&) override;
 		void visit(const stmt::Print&) override;
@@ -34,14 +35,14 @@ namespace lox
 
 		void execute(const stmt::Statement&);
 		void execute_block(const StatementList& list, Environment::Ptr env);
-		Literal evaluate(const expr::Expression&);
+		Object evaluate(const expr::Expression&);
 
-		static bool is_true(const Literal&);
-		static bool are_equal(const Literal&, const Literal&);
-		static bool equal_impl(const Literal&, const Literal&);
+		static bool is_true(const Object&);
+		static bool are_equal(const Object&, const Object&);
+		static bool equal_impl(const Object&, const Object&);
 
-		static void validate_number(const Token&, const Literal&) noexcept(false);
-		static void check_number_operands(const Token&, const Literal&, const Literal&) noexcept(false);
+		static void validate_number(const Token&, const Object&) noexcept(false);
+		static void check_number_operands(const Token&, const Object&, const Object&) noexcept(false);
 	};
 
 }

@@ -17,9 +17,9 @@ void lox::Interpreter::Interpret(const StatementList &statements)
 	}
 }
 
-lox::Literal lox::Interpreter::evaluate(const expr::Expression &expr)
+lox::Object lox::Interpreter::evaluate(const expr::Expression &expr)
 {
-	return std::any_cast<const Literal&>(expr.accept(*this));
+	return std::any_cast<const Object&>(expr.accept(*this));
 }
 
 std::any lox::Interpreter::visit(const expr::Binary &expr)
@@ -33,58 +33,58 @@ std::any lox::Interpreter::visit(const expr::Binary &expr)
 	{
 	case TokenType::MINUS:
 		check_number_operands(expr.operation, left, right);
-		return Literal(*plhs - *prhs);
+		return Object(*plhs - *prhs);
 		break;
 	case TokenType::PLUS:
 	{
 		try
 		{
-			return Literal{ std::get<std::string>(left) + std::get<std::string>(right) };
+			return Object{ std::get<std::string>(left) + std::get<std::string>(right) };
 		}
 		catch (const std::bad_variant_access&)
 		{
 			check_number_operands(expr.operation, left, right);
 			if (!(plhs && prhs)) throw RuntimeError(expr.operation, "Operands must be numbers of strings.");
-			return Literal{ (*plhs + *prhs) }; // assuming both of them are same
+			return Object{ (*plhs + *prhs) }; // assuming both of them are same
 		}
 	} break;
 
 	case TokenType::ASTERISK:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ std::multiplies<>{}(*plhs, *prhs) };
+		return Object{ std::multiplies<>{}(*plhs, *prhs) };
 		break;
 
 	case TokenType::SLASH:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ std::divides<>{}(*plhs, *prhs) };
+		return Object{ std::divides<>{}(*plhs, *prhs) };
 		break;
 
 	case TokenType::LESS:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ *plhs < *prhs };
+		return Object{ *plhs < *prhs };
 		break;
 
 	case TokenType::LESS_EQUAL:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ *plhs <= *prhs };
+		return Object{ *plhs <= *prhs };
 		break;
 
 	case TokenType::GREATER:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ *plhs > *prhs };
+		return Object{ *plhs > *prhs };
 		break;
 
 	case TokenType::GREATER_EQUAL:
 		check_number_operands(expr.operation, left, right);
-		return Literal{ *plhs >= *prhs };
+		return Object{ *plhs >= *prhs };
 		break;
 
 	case TokenType::COMPARE:
-		return Literal{ are_equal(left, right) };
+		return Object{ are_equal(left, right) };
 		break;
 
 	case TokenType::NOT_EQUAL:
-		return Literal{ !are_equal(left, right) };
+		return Object{ !are_equal(left, right) };
 
 	default:
 		UNREACHABLE();
@@ -105,11 +105,11 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 	switch (operation.type)
 	{
 	case TokenType::NOT:
-		return Literal{ std::logical_not<>()(is_true(operand)) };
+		return Object{ std::logical_not<>()(is_true(operand)) };
 
 	case TokenType::MINUS:
 		validate_number(operation, operand);
-		return Literal{ std::negate<>()(std::get<Operand>(operand)) };
+		return Object{ std::negate<>()(std::get<Operand>(operand)) };
 
 	case TokenType::DOUBLE_PLUS: // incomplete, temporary
 		validate_number(operation, operand);
@@ -121,8 +121,8 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 		}
 		else ++net;
 		// else throw lox::RuntimeError(operation, "Operand to increment is not an L-value.");
-		// return Literal(std::get<Operand>(operand) + 1);
-		return Literal{ net };
+		// return Object(std::get<Operand>(operand) + 1);
+		return Object{ net };
 
 	case TokenType::DOUBLE_MINUS:
 		validate_number(operation, operand);
@@ -135,14 +135,14 @@ std::any lox::Interpreter::visit(const expr::Unary &expr)
 		}
 		else --net;
 		// else throw lox::RuntimeError(operation, "Operand to decrement is not an L-value.");
-		// return Literal{ std::get<Operand>(operand) - 1 };
-		return Literal{ net };
+		// return Object{ std::get<Operand>(operand) - 1 };
+		return Object{ net };
 
 	default:
 		UNREACHABLE();
 	}
-	// environment->assign(ptr->name, Literal{ ++std::get<Operand>(operand) });
-	return Literal{}; // monostate/default - no value
+	// environment->assign(ptr->name, Object{ ++std::get<Operand>(operand) });
+	return Object{}; // monostate/default - no value
 }
 
 std::any lox::Interpreter::visit(const expr::Conditional &expr)
@@ -152,7 +152,7 @@ std::any lox::Interpreter::visit(const expr::Conditional &expr)
 	if (is_true(condition)) return evaluate(*expr.left);
 	else return evaluate(*expr.right);
 
-	return Literal{"Not convertible to a boolean!"}; // temporary error signaling
+	return Object{"Not convertible to a boolean!"}; // temporary error signaling
 }
 
 std::any lox::Interpreter::visit(const expr::Grouping &expr)
@@ -162,7 +162,7 @@ std::any lox::Interpreter::visit(const expr::Grouping &expr)
 
 std::any lox::Interpreter::visit(const expr::Operator &)
 {
-	return Literal{"Unused visitor!"};
+	return Object{"Unused visitor!"};
 }
 
 std::any lox::Interpreter::visit(const expr::Value &expr)
@@ -182,6 +182,25 @@ std::any lox::Interpreter::visit(const expr::Assign &expr)
 	return value; // return the right side of the assignment
 }
 
+std::any lox::Interpreter::visit(const expr::Logical &exp)
+{
+	auto operation = exp.operation.type;
+	auto left = evaluate(*exp.left);
+	// auto right = evaluate(*exp.right); // dont evaluate both
+
+	if (operation == TokenType::OR || operation == TokenType::DOUBLE_LINE)
+	{
+		if (is_true(left)) return left;
+		// return Literal {is_true(right)};
+	}
+	else if (operation == TokenType::AND || operation == TokenType::DOUBLE_AMP)
+	{
+		if (!is_true(left)) return left;
+	}
+	else UNREACHABLE();
+	return evaluate(*exp.right);
+}
+
 void lox::Interpreter::visit(const stmt::Expression &stmt)
 {
 	evaluate(*stmt.expression);
@@ -189,13 +208,13 @@ void lox::Interpreter::visit(const stmt::Expression &stmt)
 
 void lox::Interpreter::visit(const stmt::Print &stmt)
 {
-	Literal value = evaluate(*stmt.expression);
+	Object value = evaluate(*stmt.expression);
 	std::cout << value.str() << std::endl;
 }
 
 void lox::Interpreter::visit(const stmt::Var &stmt)
 {
-	Literal init; // default init to null
+	Object init; // default init to null
 	if (stmt.initializer != nullptr) init = evaluate(*stmt.initializer);
 
 	environment->define(stmt.name.lexeme, init);
@@ -233,8 +252,8 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 		{
 			target = previous;
 		}
-		Environment::Ptr previous;
 		Environment::Ptr& target;
+		Environment::Ptr previous;
 	} current(environment, env); // replace interpreter environment with the block scope env, save copy of the original
 	// and replace it with original at the end
 
@@ -252,7 +271,7 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 	*/
 }
 
-bool lox::Interpreter::is_true(const Literal &literal) //const
+bool lox::Interpreter::is_true(const Object &literal) //const
 {
 	if (auto val = std::get_if<bool>(&literal)) return *val; // bool
 	if (auto val = std::get_if<std::string>(&literal)) return val->length();
@@ -262,13 +281,13 @@ bool lox::Interpreter::is_true(const Literal &literal) //const
 	return false; // implicit if literal holds nothing, i.e. monostate
 }
 
-bool lox::Interpreter::are_equal(const Literal &lhs, const Literal &rhs) //const
+bool lox::Interpreter::are_equal(const Object &lhs, const Object &rhs) //const
 {
 	if (lhs.index() != rhs.index()) return false; // the types held are not same: should raise an error
 	return equal_impl(lhs, rhs);
 }
 
-bool lox::Interpreter::equal_impl(const Literal &lhs, const Literal &rhs) //const
+bool lox::Interpreter::equal_impl(const Object &lhs, const Object &rhs) //const
 {
 	return std::visit([](const auto &left, const auto &right) -> bool {
 		using T = std::decay_t < std::remove_reference_t<decltype(left) >> ;
@@ -279,16 +298,16 @@ bool lox::Interpreter::equal_impl(const Literal &lhs, const Literal &rhs) //cons
 			return false;
 		else if constexpr (std::is_same<T, std::nullptr_t>::value || std::is_same<T, std::monostate>::value) return true;
 		else return std::equal_to<T>{}(left, right);
-	}, static_cast<Literal::Base>(lhs), static_cast<Literal::Base>(rhs));
+	}, static_cast<Object::Base>(lhs), static_cast<Object::Base>(rhs));
 }
 
-void lox::Interpreter::validate_number(const Token &token, const Literal &operand)
+void lox::Interpreter::validate_number(const Token &token, const Object &operand)
 {
 	if (std::holds_alternative<Operand>(operand)) return;
 	throw lox::RuntimeError(token, "Operand must be a number.");
 }
 
-void lox::Interpreter::check_number_operands(const Token &oper, const Literal &left, const Literal &right)
+void lox::Interpreter::check_number_operands(const Token &oper, const Object &left, const Object &right)
 {
 	if(std::holds_alternative<Operand>(left) && std::holds_alternative<Operand>(right)) return;
 

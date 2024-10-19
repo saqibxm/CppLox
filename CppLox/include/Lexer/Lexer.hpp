@@ -47,9 +47,8 @@ private:
 
 	bool match(std::string::value_type);
 
-	// void add_token(TokenType type, Token::LiteralOptional literal = std::nullopt);
-	void add_token(TokenType, Token::LiteralOptional);
-	void add_token(TokenType type, Literal literal);
+	// void add_token(TokenType, Token::LiteralOptional);
+	void add_token(TokenType type, const Literal &literal);
 	void add_token(TokenType type);
 
 	void identifier();

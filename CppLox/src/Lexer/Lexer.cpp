@@ -167,7 +167,7 @@ void lox::Lexer::add_token(TokenType type, Token::LiteralOptional literal) {
 	tokens.emplace_back(type, text, *literal, line, start);
 }*/
 
-void lox::Lexer::add_token(TokenType type, Literal literal)
+void lox::Lexer::add_token(TokenType type, const Literal &literal)
 {
 	std::string text = source.substr(start, current - start);
 	tokens.emplace_back(type, text, std::move(literal), line, start);

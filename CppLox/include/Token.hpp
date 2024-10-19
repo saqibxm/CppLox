@@ -74,13 +74,8 @@ namespace lox {
 		{
 			;
 		}*/
-		Token(TokenType t, std::string value, Literal lit, std::size_t ln, std::size_t pos = -1)
-			: type(t), lexeme(value), literal(std::move(lit)), line(ln), position(pos)
-		{
-			;
-		}
-		Token(const Token &obj)
-			: type(obj.type), lexeme(obj.lexeme), literal(obj.literal), line(obj.line), position(obj.position)
+		Token(TokenType t, std::string value, const Literal &lit, std::size_t ln, std::size_t pos = -1)
+			: type(t), lexeme(value), literal(lit), line(ln), position(pos)
 		{
 			;
 		}

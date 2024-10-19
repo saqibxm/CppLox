@@ -21,14 +21,12 @@ namespace lox
 
 		void define(const std::string &name, const Object &init);
 
-		Object retrieve(const Token &name);
+		const Object& retrieve(const Token &name) const;
 		Object retrieve(const Storage::key_type &name);
 
 		void assign(const Token &name, const Object &val);
 		void assign(const Storage::key_type &name, const Object &val);
 
-		// Object get(std::string_view name);
-		// void set(std::string_view name);
 		void reserve(Storage::size_type n);
 
 	private:
@@ -36,7 +34,15 @@ namespace lox
 		Ptr enclosing; // the environment scope that encloses this one
 		// cant be a const pointer since that disables copy assignments
 
-		Object get(const Token &name);
+		const Object& get(const Token &name) const;
 		void set(const Token &name, const Object &val);
+
+		// std::optional<Object> get(const std::string &name) const;
+		// void set(const std::string &name);
 	};
 }
+
+/*
+Object get(std::string_view name);
+void set(std::string_view name);
+*/

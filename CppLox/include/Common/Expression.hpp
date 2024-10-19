@@ -99,18 +99,18 @@ namespace lox::expr {
 	class Value final : public Expression
 	{
 	public:
-		explicit Value(Literal val);
+		explicit Value(Object val);
 		template <typename T, std::enable_if_t<std::is_same_v<T, bool>, int> = 0>
-		explicit Value(T b) : Value(Literal{ std::in_place_type<bool>, b }) {}
+		explicit Value(T b) : Value(Object{ std::in_place_type<bool>, b }) {}
 		template <typename T,
 			typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, bool>>>
-			Value(T val) : Value(Literal{ std::in_place_type<Operand>, val }) {}
-		Value(const std::string &str) : Value(Literal{ str }) {}
-		Value(std::nullptr_t) : Value(Literal{ nullptr }) {}
+			Value(T val) : Value(Object{ std::in_place_type<Operand>, val }) {}
+		Value(const std::string &str) : Value(Object{ str }) {}
+		Value(std::nullptr_t) : Value(Object{ nullptr }) {}
 
 		std::any accept(ExprVisitor &visitor) const override;
 
-		Literal value;
+		Object value;
 	};
 
 	class Variable final : public Expression
@@ -133,6 +133,17 @@ namespace lox::expr {
 		Token name;
 		Expr value;
 	};
+
+	class Logical final : public Expression
+	{
+	public:
+		Logical(Expr &&lhs, const Token &oper, Expr &&rhs);
+
+		std::any accept(ExprVisitor &visitor) const override;
+
+		Token operation;
+		Expr left, right;
+	};
 }
 
 /*
@@ -140,23 +151,23 @@ template <typename T,
 			typename X = std::enable_if_t<std::conjunction(std::negation(std::is_same_v<T, bool>), std::is_convertible_v<T, Operand>)>>
 		Value(T val) : value(std::in_place_type<double>, val) {}
 
-Value(T val) : Value(Literal::Variant{ std::in_place_type<Operand>, val }) {}
+Value(T val) : Value(Object::Variant{ std::in_place_type<Operand>, val }) {}
 
 
 class Value final : public Expression
 	{
 	public:
-		explicit Value(Literal val);
+		explicit Value(Object val);
 		template <typename T, std::enable_if_t<std::is_same_v<T, bool>, int> = 0>
-		explicit Value(T b) : Value(Literal{ std::in_place_type<bool>, b }) {}
+		explicit Value(T b) : Value(Object{ std::in_place_type<bool>, b }) {}
 		template <typename T,
 			typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, bool>>>
-		Value(T val) : Value(Literal{ std::in_place_type<Operand>, val }) {}
-		Value(const std::string &str) : Value(Literal{str}) {}
-		Value(std::nullptr_t) : Value(Literal{Literal::null}) {}
+		Value(T val) : Value(Object{ std::in_place_type<Operand>, val }) {}
+		Value(const std::string &str) : Value(Object{str}) {}
+		Value(std::nullptr_t) : Value(Object{Object::null}) {}
 
 		std::any accept(ExprVisitor &visitor) const override;
 
-		Literal value;
+		Object value;
 	};
 */

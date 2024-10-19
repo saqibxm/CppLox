@@ -2,20 +2,26 @@
 
 void lox::Environment::define(const std::string &name, const Object &init)
 {
-	// doesnt check if the name already exists, choice to make it a redefintion error
+	// doesn't check if the name already exists, choice to make it a redefintion error
 	// can selectively disable error if running in REPL mode, otherwise let it throw an error.
 	// values.insert({ name, init }); // doesnt insert if already exists
+
+	if (values.find(name) != values.end() && init.empty()) return; // donot let varibale be uninitialized on purpose
+	// persist the value it has unless an initializer is provided
 	values[name] = init;
 }
 
-lox::Object lox::Environment::retrieve(const Token & name)
+const lox::Object& lox::Environment::retrieve(const Token & name) const
 {
-	return get(name);
+	const auto& obj = get(name);
+	if (obj.empty()) throw RuntimeError(name, "Uninitialized variable '" + name.lexeme + "' used.");
+	return obj;
 }
 
 lox::Object lox::Environment::retrieve(const Storage::key_type & name)
 {
 	return get(Token(TokenType::IDENTIFIER, name, {}, -1));
+	// return get(name);
 }
 
 void lox::Environment::assign(const Token & name, const Object & val)
@@ -33,7 +39,7 @@ void lox::Environment::reserve(Storage::size_type n)
 	values.reserve(n);
 }
 
-lox::Object lox::Environment::get(const Token & name)
+const lox::Object& lox::Environment::get(const Token & name) const
 {
 	// choices are to indicate syntax error, throw runtime error (used) return null.
 	auto iter = values.find(name.lexeme);
@@ -59,6 +65,19 @@ void lox::Environment::set(const Token & name, const Object & val)
 	it->second = val;
 }
 
+/*
+std::optional<lox::Object> lox::Environment::get(const std::string &name) const
+{
+	auto iter = values.find(name);
+	if (iter == values.end())
+	{
+		if (!enclosing)
+			return std::nullopt;
+		else return enclosing->get(name);
+	}
+	return iter->second;
+}
+*/
 
 /*
 lox::Object lox::Environment::get(const Token & name)

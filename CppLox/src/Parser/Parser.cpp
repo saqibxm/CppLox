@@ -85,7 +85,7 @@ lox::StatementList lox::Parser::block()
 
 lox::Expr lox::Parser::assignment()
 {
-	Expr exp = conditional();
+	Expr exp = logic_or();
 	if (match(TokenType::EQUAL))
 	{
 		const Token equals = previous();
@@ -96,6 +96,34 @@ lox::Expr lox::Parser::assignment()
 		else error(equals, "Expected an identifier on left hand of assignment.");
 	}
 	return exp;
+}
+
+lox::Expr lox::Parser::logic_or()
+{
+	Expr expr = logic_and();
+
+	while (match(TokenType::OR, TokenType::DOUBLE_LINE))
+	{
+		const Token &oper = previous();
+		Expr right = logic_and();
+
+		return Expr(new expr::Logical(std::move(expr), oper, std::move(right)));
+	}
+
+	return expr;
+}
+
+lox::Expr lox::Parser::logic_and()
+{
+	Expr expr = conditional();
+
+	while (match(TokenType::AND, TokenType::DOUBLE_AMP))
+	{
+		const auto &oper = previous(); // saved because parsing right side will change marker
+		Expr right = conditional();
+		return Expr(new expr::Logical(std::move(expr), oper, std::move(right)));
+	}
+	return expr;
 }
 
 lox::Expr lox::Parser::conditional()
@@ -220,7 +248,7 @@ lox::Expr lox::Parser::primary()
 
 	if (match(TokenType::TRUE)) return Expr(new Value(true));
 	if (match(TokenType::FALSE)) return Expr(new Value(false));
-	if (match(TokenType::NUL)) return Expr(new Value(Literal::null));
+	if (match(TokenType::NUL)) return Expr(new Value(lox::null));
 
 	if (match(TokenType::STRING, TokenType::NUMBER)) return Expr(new Value(previous().literal));
 	if (match(TokenType::IDENTIFIER)) return Expr(new expr::Variable(previous()));

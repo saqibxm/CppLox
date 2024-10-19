@@ -64,7 +64,7 @@ std::any expr::Operator::accept(ExprVisitor & visitor) const
 	return visitor.visit(*this);
 }
 
-expr::Value::Value(Literal val)
+expr::Value::Value(Object val)
 	: value(std::move(val))
 {
 }
@@ -106,6 +106,16 @@ lox::expr::Assign::Assign(const Token & vname, Expr && val)
 }
 
 std::any lox::expr::Assign::accept(ExprVisitor & visitor) const
+{
+	return visitor.visit(*this);
+}
+
+lox::expr::Logical::Logical(Expr && lhs, const Token & oper, Expr && rhs)
+	: operation(oper), left(std::move(lhs)), right(std::move(rhs))
+{
+}
+
+std::any lox::expr::Logical::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }

@@ -13,13 +13,12 @@ namespace lox {
 		return std::get<R>(variant);
 	}
 
-struct Literal : public std::variant<std::nullptr_t, Operand, std::string, bool>
+using Variant = std::variant<std::monostate, std::nullptr_t, Operand, std::string, bool>;
+struct Literal : public Variant
 {
-	using Base = std::variant<std::nullptr_t, Operand, std::string, bool>;
-	// using Base::variant;
+	using Base = Variant;
 	using Base::variant;
 	static const Literal None;
-	static const inline std::nullptr_t null{};
 	// template <typename T, typename...Args>
 	// explicit AlternateLiteral(std::in_place_type_t<T> ipt, Args&&...args) : Base(std::move(ipt), std::forward<Args>(args)...) {}
 
@@ -60,7 +59,8 @@ struct Literal : public std::variant<std::nullptr_t, Operand, std::string, bool>
 	void set(std::nullptr_t);
 	void set(bool b);
 	void reset();
-	bool empty() const { return std::holds_alternative<std::nullptr_t>(*this); }
+	bool empty() const noexcept { return std::holds_alternative<std::monostate>(*this); }
+	bool null() const noexcept { return std::holds_alternative<std::nullptr_t>(*this); }
 
 	std::string get_strliteral() const;
 	Operand get_number() const;
@@ -68,6 +68,7 @@ struct Literal : public std::variant<std::nullptr_t, Operand, std::string, bool>
 };
 
 using Object = Literal;
+inline std::nullptr_t null;
 }
 
 /*

@@ -56,7 +56,8 @@ void lox::Literal::set(bool b)
 void Literal::reset()
 {
 	// literal = Variant{};
-	*this = nullptr;
+	// *this = nullptr;
+	this->emplace<0>();
 }
 
 /*

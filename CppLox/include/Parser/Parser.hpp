@@ -24,7 +24,9 @@ ifStmt -> if "(" expression ")" statement ( "else" statement )? ;
 /*
 expression -> conditional ;
 assignment -> IDENTIFIER "=" expression
-	| conditional ;
+	| logic_or ;
+logic_or -> logic_and ( "or" | "||" logic_and )* ;
+logic_and -> conditional ( "and" | "&&" conditional ) ;
 conditional -> separation ( "?" expression : conditional )? ; // refer to cppref C conditonal operator
 separation -> equality ( "," equality )* ;
 equality -> comparison ( ( "!=" | "==" ) comparison )* ;
@@ -101,6 +103,8 @@ namespace lox {
 			return assignment();
 		}
 		Expr assignment();
+		Expr logic_or();
+		Expr logic_and();
 		Expr conditional();
 		Expr separation();
 		Expr equality();
