@@ -11,7 +11,7 @@ namespace lox
 	class Interpreter : public ExprVisitor, public StmtVisitor
 	{
 	public:
-		Interpreter() : environment(new Environment) {}
+		Interpreter() : environment(new Environment) { environment->reserve(100); }
 		void Interpret(const StatementList&);
 
 		std::any visit(const expr::Binary&) override;

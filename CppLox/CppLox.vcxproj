@@ -70,23 +70,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)bin\obj\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)bin\x86\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)bin\obj\x86\$(Configuration)\</IntDir>
     <TargetName>Lox</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)bin\obj\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)bin\x86\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)bin\obj\x86\$(Configuration)\</IntDir>
     <TargetName>Lox</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)x64\obj\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)bin\obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>Lox</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)x64\obj\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)bin\obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>Lox</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

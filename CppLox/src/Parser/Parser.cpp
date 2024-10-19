@@ -103,7 +103,7 @@ lox::Stmt lox::Parser::for_loop()
 	Expr modifier;
 	if (!check(TokenType::RPAREN)) modifier = expression();
 
-	consume(TokenType::RPAREN, "Left parentheses '(' is required after the 'for' clause.");
+	consume(TokenType::RPAREN, "Left parentheses ')' is required after the 'for' clause.");
 
 	Stmt body = statement();
 	// Convert to Semantic While Loop
