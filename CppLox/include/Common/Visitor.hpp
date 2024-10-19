@@ -27,6 +27,7 @@ namespace lox::stmt
 	class Var;
 	class Block;
 	class IfControl;
+	class While;
 }
 
 namespace lox
@@ -52,6 +53,7 @@ namespace lox
 		virtual void visit(const stmt::Var&) = 0;
 		virtual void visit(const stmt::Block&) = 0;
 		virtual void visit(const stmt::IfControl&) = 0;
+		virtual void visit(const stmt::While&) = 0;
 	};
 
 	class ASTPrinter : public ExprVisitor

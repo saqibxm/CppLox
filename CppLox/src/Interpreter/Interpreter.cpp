@@ -234,6 +234,15 @@ void lox::Interpreter::visit(const stmt::IfControl &stmt)
 	else if(stmt.else_stmt != nullptr) execute(*stmt.else_stmt);
 }
 
+void lox::Interpreter::visit(const stmt::While &stmt)
+{
+	// auto condition = evaluate(*stmt.condition); // donot evaluate once, evalute on every iteration.
+	while (is_true(evaluate(*stmt.condition)))
+	{
+		execute(*stmt.body);
+	}
+}
+
 void lox::Interpreter::execute(const stmt::Statement &stmt)
 {
 	stmt.accept(*this);

@@ -17,7 +17,6 @@ lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 
 lox::Stmt lox::Parser::declaration() try {
 	if (match(TokenType::VAR)) return variable_decl();
-	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
 	return statement();
 } catch (const ParseError&) {
 	synchronize();
@@ -39,7 +38,9 @@ lox::Stmt lox::Parser::variable_decl()
 lox::Stmt lox::Parser::statement()
 {
 	if (match(TokenType::IF)) return if_statement();
+	if (match(TokenType::WHILE)) return while_loop();
 	if (match(TokenType::PRINT)) return print_statement();
+	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
 	return expression_statement();
 }
 
@@ -69,6 +70,16 @@ lox::Stmt lox::Parser::if_statement()
 		else_branch = statement();
 
 	return Stmt(new stmt::IfControl(std::move(condition), std::move(then_branch), std::move(else_branch)));
+}
+
+lox::Stmt lox::Parser::while_loop()
+{
+	consume(TokenType::LPAREN, "Expected opening parentheses '(' after 'while'.");
+	Expr condition = expression();
+	consume(TokenType::RPAREN, "Closing parentheses ')' expected after condition.");
+
+	Stmt body = statement();
+	return Stmt(new stmt::While(std::move(condition), std::move(body)));
 }
 
 lox::StatementList lox::Parser::block()

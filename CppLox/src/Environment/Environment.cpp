@@ -57,12 +57,10 @@ void lox::Environment::set(const Token & name, const Object & val)
 	auto it = values.find(name.lexeme);
 	if (it == values.end())
 	{
-		if(!enclosing)
-		throw lox::RuntimeError(name, "Identifier \'" + name.lexeme + "\' is not defined.");
-
+		if(!enclosing) throw lox::RuntimeError(name, "Identifier \'" + name.lexeme + "\' is not defined.");
 		enclosing->set(name, val);
 	}
-	it->second = val;
+	else it->second = val; // without the else this is a logic error
 }
 
 /*

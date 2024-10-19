@@ -15,11 +15,12 @@
 program -> declaration* EOF ;
 declaration -> varDecl | statement ;
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-statement -> expressionStmt| printStmt | block | ifStmt ;
+statement -> expressionStmt| printStmt | ifStmt | whileStmt | block ;
 block -> "{" declaration* "}" ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
 ifStmt -> if "(" expression ")" statement ( "else" statement )? ;
+whileStmt -> while "(" expression ")" statement ; // can make the statement optional
 */
 /*
 expression -> conditional ;
@@ -97,6 +98,7 @@ namespace lox {
 		Stmt print_statement();
 		Stmt expression_statement();
 		Stmt if_statement();
+		Stmt while_loop();
 		StatementList block();
 
 		Expr expression() {

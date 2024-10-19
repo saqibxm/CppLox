@@ -66,4 +66,14 @@ namespace lox::stmt
 		Stmt then_stmt;
 		Stmt else_stmt;
 	};
+
+	class While final : public Statement
+	{
+	public:
+		While(Expr&&, Stmt&&);
+		void accept(StmtVisitor&) const override;
+
+		Expr condition;
+		Stmt body;
+	};
 }
