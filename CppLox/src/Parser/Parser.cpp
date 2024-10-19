@@ -39,9 +39,10 @@ lox::Stmt lox::Parser::statement()
 {
 	if (match(TokenType::IF)) return if_statement();
 	if (match(TokenType::WHILE)) return while_loop();
+	if (match(TokenType::FOR)) return for_loop();
 	if (match(TokenType::PRINT)) return print_statement();
 	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
-	return expression_statement();
+	return expression_stmt();
 }
 
 lox::Stmt lox::Parser::print_statement()
@@ -51,7 +52,7 @@ lox::Stmt lox::Parser::print_statement()
 	return Stmt(new stmt::Print(std::move(expr)));
 }
 
-lox::Stmt lox::Parser::expression_statement()
+lox::Stmt lox::Parser::expression_stmt()
 {
 	Expr expr = expression();
 	consume(TokenType::SCOLON, "Expected a terminating ';' at the end of statement.");
@@ -80,6 +81,70 @@ lox::Stmt lox::Parser::while_loop()
 
 	Stmt body = statement();
 	return Stmt(new stmt::While(std::move(condition), std::move(body)));
+}
+
+lox::Stmt lox::Parser::for_loop()
+{
+	consume(TokenType::LPAREN, "Opening parentheses '(' expected for the 'for' header clause.");
+
+	Stmt initializer;
+	if (match(TokenType::SCOLON)) initializer = nullptr;
+	else if (match(TokenType::VAR)) initializer = variable_decl();
+	else initializer = expression_stmt();
+	
+	Expr condition;
+	if (!check(TokenType::SCOLON)) condition = expression();
+	else condition = Expr(new expr::Value(true));
+
+	consume(TokenType::SCOLON, "Expected ';' after loop condition.");
+
+	// Expr modifier = expression(); // won't be desired since there is no handler for RPAREN in primary()
+	// this will result in an error ("Expected an expression")
+	Expr modifier;
+	if (!check(TokenType::RPAREN)) modifier = expression();
+
+	consume(TokenType::RPAREN, "Left parentheses '(' is required after the 'for' clause.");
+
+	Stmt body = statement();
+	// Convert to Semantic While Loop
+	// Oh std::initializer_list give us convenience of Move semantics
+	// oh wise unique_ptr give us non explicit T* constructor
+
+	// lox::StatementList list; // can use push_back or emplace_back
+	std::array<lox::Stmt, 2> list;
+	auto &[first, second] = list;
+	if (modifier)
+	{
+		// std::array<lox::Stmt, 2> list = { std::move(body), Stmt(new stmt::Expression(std::move(modifier))) }; // works
+		first = std::move(body);
+		second = Stmt(new stmt::Expression(std::move(modifier)));
+
+		body = Stmt(new stmt::While(
+			std::move(condition),
+			Stmt(new stmt::Block(StatementList(
+				std::make_move_iterator(list.begin()), std::make_move_iterator(list.end()))
+				)
+			// Stmt(new stmt::Block(std::move(list))
+			)
+		));
+	}
+	// list.clear(); // reuse the existing list, cleared up since unique_ptr values are moved
+
+	if (initializer) // if initializer was provided, put it on top
+	{
+		first = std::move(initializer);
+		second = std::move(body);
+
+		// body = Stmt(new stmt::Block(std::move(list)));
+		body = Stmt(new stmt::Block(StatementList(
+			std::make_move_iterator(list.begin()), std::make_move_iterator(list.end())
+		)));
+	}
+
+	/** SKETCH
+	**/
+
+	return body;
 }
 
 lox::StatementList lox::Parser::block()

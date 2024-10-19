@@ -46,7 +46,7 @@ const lox::Object& lox::Environment::get(const Token & name) const
 	if (iter == values.end())
 	{
 		if(!enclosing)
-			throw RuntimeError(name, '\"' + name.lexeme + "\" identifier not found, undefined variable.");
+			throw RuntimeError(name, "Identifier '" + name.lexeme + "' not found, undefined variable.");
 		else return enclosing->get(name);
 	}
 	return iter->second;

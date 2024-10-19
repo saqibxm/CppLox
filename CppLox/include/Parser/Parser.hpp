@@ -15,12 +15,14 @@
 program -> declaration* EOF ;
 declaration -> varDecl | statement ;
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-statement -> expressionStmt| printStmt | ifStmt | whileStmt | block ;
+statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | block ;
 block -> "{" declaration* "}" ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
-ifStmt -> if "(" expression ")" statement ( "else" statement )? ;
-whileStmt -> while "(" expression ")" statement ; // can make the statement optional
+ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;
+whileStmt -> "while" "(" expression ")" statement ; // can make the statement optional
+forStmt -> "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
+// ( varDecl | exprStmt | ";" ) because varDecl or exprStmt already consume a semicolon
 */
 /*
 expression -> conditional ;
@@ -96,9 +98,10 @@ namespace lox {
 		Stmt variable_decl();
 		Stmt statement();
 		Stmt print_statement();
-		Stmt expression_statement();
+		Stmt expression_stmt();
 		Stmt if_statement();
 		Stmt while_loop();
+		Stmt for_loop();
 		StatementList block();
 
 		Expr expression() {
