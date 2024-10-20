@@ -160,9 +160,10 @@ std::any lox::Interpreter::visit(const expr::Grouping &expr)
 	return evaluate(*expr.expression);
 }
 
-std::any lox::Interpreter::visit(const expr::Operator &)
+std::any lox::Interpreter::visit(const expr::Operator &expr)
 {
-	return Object{"Unused visitor!"};
+	// return expr.operation.type == TokenType::BREAK ? Object{ true } : Object{ false };
+	return Object{"Not Implemented"};
 }
 
 std::any lox::Interpreter::visit(const expr::Value &expr)
@@ -237,10 +238,22 @@ void lox::Interpreter::visit(const stmt::IfControl &stmt)
 void lox::Interpreter::visit(const stmt::While &stmt)
 {
 	// auto condition = evaluate(*stmt.condition); // donot evaluate once, evalute on every iteration.
+	try {
 	while (is_true(evaluate(*stmt.condition)))
 	{
+		try {
 		execute(*stmt.body);
+		} catch(const lox::ContinueExcept&) {}
 	}
+	}
+	catch (const lox::BreakExcept&) {}
+}
+
+void lox::Interpreter::visit(const stmt::LoopControl &stmt)
+{
+	if (stmt.control == stmt::LoopControl::BREAK)
+		throw BreakExcept();
+	else throw ContinueExcept();
 }
 
 void lox::Interpreter::execute(const stmt::Statement &stmt)

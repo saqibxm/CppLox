@@ -2,6 +2,12 @@
 
 using namespace lox::expr;
 
+struct ScopedAdvance {
+	ScopedAdvance(std::size_t &obj) : target(obj) { ++target; }
+	~ScopedAdvance() { --target; }
+	std::size_t &target;
+};
+
 lox::Parser::Parser(const TokenQueue &toks)
 	: tokens(toks), available(true), current(0)
 {
@@ -41,6 +47,7 @@ lox::Stmt lox::Parser::statement()
 	if (match(TokenType::WHILE)) return while_loop();
 	if (match(TokenType::FOR)) return for_loop();
 	if (match(TokenType::PRINT)) return print_statement();
+	if (match(TokenType::BREAK, TokenType::CONTINUE)) return loop_control();
 	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
 	return expression_stmt();
 }
@@ -75,6 +82,7 @@ lox::Stmt lox::Parser::if_statement()
 
 lox::Stmt lox::Parser::while_loop()
 {
+	ScopedAdvance inc(loop_count);
 	consume(TokenType::LPAREN, "Expected opening parentheses '(' after 'while'.");
 	Expr condition = expression();
 	consume(TokenType::RPAREN, "Closing parentheses ')' expected after condition.");
@@ -85,6 +93,7 @@ lox::Stmt lox::Parser::while_loop()
 
 lox::Stmt lox::Parser::for_loop()
 {
+	ScopedAdvance inc(loop_count);
 	consume(TokenType::LPAREN, "Opening parentheses '(' expected for the 'for' header clause.");
 
 	Stmt initializer;
@@ -145,6 +154,15 @@ lox::Stmt lox::Parser::for_loop()
 	**/
 
 	return body;
+}
+
+lox::Stmt lox::Parser::loop_control()
+{
+	const auto &oper = previous();
+
+	if (loop_count == 0) error(oper, '\'' + oper.lexeme + "' statement outside the loop.");
+	consume(TokenType::SCOLON, "Expected a ';' after " + util::to_string(oper.type) + '.');
+	return Stmt(new stmt::LoopControl(oper.type == TokenType::BREAK ? stmt::LoopControl::BREAK : stmt::LoopControl::CONTINUE));
 }
 
 lox::StatementList lox::Parser::block()

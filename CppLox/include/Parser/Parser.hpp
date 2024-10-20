@@ -15,7 +15,7 @@
 program -> declaration* EOF ;
 declaration -> varDecl | statement ;
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | block ;
+statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | controlStmt | block ;
 block -> "{" declaration* "}" ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
@@ -23,8 +23,8 @@ ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;
 whileStmt -> "while" "(" expression ")" statement ; // can make the statement optional
 forStmt -> "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
 // ( varDecl | exprStmt | ";" ) because varDecl or exprStmt already consume a semicolon
-*/
-/*
+controlStmt -> "continue" | "break" ;
+
 expression -> conditional ;
 assignment -> IDENTIFIER "=" expression
 	| logic_or ;
@@ -77,6 +77,7 @@ namespace lox {
 	private:
 		TokenQueue tokens;
 		TokenQueue::size_type current = 0;
+		std::size_t loop_count = 0;
 
 		bool available;
 
@@ -102,6 +103,7 @@ namespace lox {
 		Stmt if_statement();
 		Stmt while_loop();
 		Stmt for_loop();
+		Stmt loop_control();
 		StatementList block();
 
 		Expr expression() {

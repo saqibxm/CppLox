@@ -21,7 +21,9 @@ const std::unordered_map<std::string, lox::TokenType> lox::Lexer::keywords = {
 	{ "var", TokenType::VAR },
 	{ "this", TokenType::THIS },
 	{ "super", TokenType::SUPER },
-	{ "class", TokenType::CLASS }
+	{ "class", TokenType::CLASS },
+	{ "break", TokenType::BREAK },
+	{ "continue", TokenType::CONTINUE }
 };
 
 lox::Lexer::Lexer()

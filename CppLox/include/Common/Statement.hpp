@@ -7,6 +7,16 @@
 namespace lox {
 	using Stmt = std::unique_ptr<stmt::Statement>;
 	using StatementList = std::vector<Stmt>;
+
+	struct BreakExcept final : public std::exception
+	{
+		BreakExcept() : std::exception("break encountered") {}
+	};
+
+	struct ContinueExcept : public std::exception
+	{
+		ContinueExcept() : std::exception("continue encountered") {}
+	};
 }
 
 namespace lox::stmt
@@ -75,5 +85,16 @@ namespace lox::stmt
 
 		Expr condition;
 		Stmt body;
+	};
+
+	class LoopControl final : public Statement
+	{
+	public:
+		enum Type { CONTINUE, BREAK };
+
+		LoopControl(Type);
+		void accept(StmtVisitor&) const override;
+
+		Type control;
 	};
 }

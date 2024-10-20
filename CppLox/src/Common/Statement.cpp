@@ -62,3 +62,13 @@ void lox::stmt::While::accept(StmtVisitor &visitor) const
 {
 	visitor.visit(*this);
 }
+
+lox::stmt::LoopControl::LoopControl(Type type)
+	: control(type)
+{
+}
+
+void lox::stmt::LoopControl::accept(StmtVisitor &visitor) const
+{
+	visitor.visit(*this);
+}

@@ -30,6 +30,7 @@ namespace lox {
 		// Keywords
 		IF, ELSE, AND, OR, TRUE, FALSE, FOR, WHILE, FN,
 		NUL, PRINT, RETURN, VAR, THIS, SUPER, CLASS,
+		BREAK, CONTINUE,
 
 		EOFILE, SIZE // conflicts with internal EOF, SIZE for the total numbers of enumerators
 	};
@@ -54,7 +55,9 @@ namespace lox::util {
 		"DOUBLE_PLUS", "DOUBLE_MINUS", "DOUBLE_AMP", "DOUBLE_LINE",
 		"IDENTIFIER", "STRING", "NUMBER",
 		"IF", "ELSE", "AND", "OR", "TRUE", "FALSE", "FOR", "WHILE", "FN",
-		"NUL", "PRINT", "RETURN", "VAR", "THIS", "SUPER", "CLASS", "EOF"
+		"NUL", "PRINT", "RETURN", "VAR", "THIS", "SUPER", "CLASS",
+		"BREAK", "CONTINUE",
+		"EOF"
 		};
 
 		return strings[static_cast<std::size_t>(type)];
