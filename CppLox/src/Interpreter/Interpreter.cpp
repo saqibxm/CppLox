@@ -238,15 +238,16 @@ void lox::Interpreter::visit(const stmt::IfControl &stmt)
 void lox::Interpreter::visit(const stmt::While &stmt)
 {
 	// auto condition = evaluate(*stmt.condition); // donot evaluate once, evalute on every iteration.
-	try {
 	while (is_true(evaluate(*stmt.condition)))
 	{
 		try {
-		execute(*stmt.body);
-		} catch(const lox::ContinueExcept&) {}
+			execute(*stmt.body);
+		} catch(const lox::ContinueExcept&) {
+			continue;
+		} catch (const lox::BreakExcept&) {
+			break;
+		}
 	}
-	}
-	catch (const lox::BreakExcept&) {}
 }
 
 void lox::Interpreter::visit(const stmt::LoopControl &stmt)
