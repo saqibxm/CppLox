@@ -25,6 +25,7 @@ operator -> "==" | "!=" | "<" | "<=" | ">" | ">="
 namespace lox
 {
 	using Expr = std::unique_ptr<expr::Expression>;
+	using ExpressionList = std::vector<Expr>;
 }
 
 namespace lox::expr {
@@ -143,6 +144,17 @@ namespace lox::expr {
 
 		Token operation;
 		Expr left, right;
+	};
+
+	class Call final : public Expression
+	{
+	public:
+		Call(Expr &&name, const Token &paren, ExpressionList &&args);
+		std::any accept(ExprVisitor &visitor) const override;
+
+		Expr callee;
+		Token paren;
+		ExpressionList arguments;
 	};
 }
 

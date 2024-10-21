@@ -1,0 +1,29 @@
+﻿C:\Users\Saqib\source\repos\CppLox\CppLox\include\Literal.hpp(37): Function definition for 'get' already exists.
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(56): Definition of function 'set' created successfully.
+
+Renamed 'Literal' to 'Object':
+------------------------------
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Diagnostics\Diagnostics.hpp(56, 26)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Lexer\Lexer.hpp(51, 39)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Literal.hpp(19, 8)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Literal.hpp(23, 15)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Literal.hpp(78, 16)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Token.hpp(73, 41)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Token.hpp(80, 47)
+C:\Users\Saqib\source\repos\CppLox\CppLox\include\Token.hpp(96, 3)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Lexer\Lexer.cpp(78, 56)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Lexer\Lexer.cpp(172, 50)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Lexer\Lexer.cpp(181, 18)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Lexer\Lexer.cpp(217, 31)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Lexer\Lexer.cpp(255, 31)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(6, 7)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(6, 15)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(37, 6)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(42, 6)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(47, 11)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(52, 11)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(57, 11)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(62, 6)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(78, 13)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(83, 14)
+C:\Users\Saqib\source\repos\CppLox\CppLox\src\Literal.cpp(91, 11)

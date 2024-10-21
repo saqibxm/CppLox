@@ -9,9 +9,9 @@
 #include "Interpreter/Interpreter.hpp"
 
 namespace {
-	static lox::Lexer lexer;
-	static lox::Parser parser;
-	static lox::Interpreter interpreter;
+	lox::Lexer lexer;
+	lox::Parser parser;
+	lox::Interpreter interpreter;
 }
 
 void lox::Run(const std::string &source)

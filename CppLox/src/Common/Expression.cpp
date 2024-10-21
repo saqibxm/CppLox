@@ -119,3 +119,13 @@ std::any lox::expr::Logical::accept(ExprVisitor & visitor) const
 {
 	return visitor.visit(*this);
 }
+
+lox::expr::Call::Call(Expr && name, const Token & paren, ExpressionList && args)
+	: callee(std::move(name)), paren(paren), arguments(std::move(args))
+{
+}
+
+std::any lox::expr::Call::accept(ExprVisitor & visitor) const
+{
+	return visitor.visit(*this);
+}

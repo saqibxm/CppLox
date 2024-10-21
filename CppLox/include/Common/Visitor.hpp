@@ -17,6 +17,7 @@ namespace lox::expr
 	class Variable;
 	class Assign;
 	class Logical;
+	class Call;
 }
 
 namespace lox::stmt
@@ -45,6 +46,7 @@ namespace lox
 		virtual std::any visit(const expr::Variable&) = 0;
 		virtual std::any visit(const expr::Assign&) = 0;
 		virtual std::any visit(const expr::Logical&) = 0;
+		virtual std::any visit(const expr::Call&) = 0;
 	};
 
 	struct StmtVisitor

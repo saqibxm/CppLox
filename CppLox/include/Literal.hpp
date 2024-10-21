@@ -3,22 +3,24 @@
 #include <variant>
 #include <optional>
 #include <string>
+
+#include "Common.h"
+#include "Functions/Callable.hpp"
 // #include <sstream>
 
 namespace lox {
-	using Operand = double;
 	template <typename R, typename V>
 	R get_type(const V& variant)
 	{
 		return std::get<R>(variant);
 	}
 
-using Variant = std::variant<std::monostate, std::nullptr_t, Operand, std::string, bool>;
-struct Literal : public Variant
+using Variant = std::variant<std::monostate, std::nullptr_t, bool, Operand, std::string, Callable::Ptr>;
+struct Object : public Variant
 {
 	using Base = Variant;
 	using Base::variant;
-	static const Literal None;
+	static const Object None;
 	// template <typename T, typename...Args>
 	// explicit AlternateLiteral(std::in_place_type_t<T> ipt, Args&&...args) : Base(std::move(ipt), std::forward<Args>(args)...) {}
 
@@ -40,6 +42,11 @@ struct Literal : public Variant
 			{
 				return v;
 			}
+			else if constexpr (std::is_same_v<T, Callable::Ptr>)
+			{
+				return v->to_string();
+				// return std::to_string((unsigned)v);
+			}
 			else if constexpr (std::is_same_v<T, std::nullptr_t>)
 			{
 				return "null";
@@ -54,10 +61,11 @@ struct Literal : public Variant
 		return s;
 	}
 
-	void set(Operand op);
-	void set(std::string_view id);
 	void set(std::nullptr_t);
+	void set(Operand op);
 	void set(bool b);
+	void set(Callable &callable);
+	void set(std::string_view id);
 	void reset();
 	bool empty() const noexcept { return std::holds_alternative<std::monostate>(*this); }
 	bool null() const noexcept { return std::holds_alternative<std::nullptr_t>(*this); }
@@ -67,7 +75,6 @@ struct Literal : public Variant
 	bool get_boolean() const;
 };
 
-using Object = Literal;
 inline std::nullptr_t null;
 }
 

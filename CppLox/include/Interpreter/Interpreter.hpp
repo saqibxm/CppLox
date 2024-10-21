@@ -8,10 +8,12 @@
 
 namespace lox
 {
+	inline Environment::Ptr globals = std::make_shared<Environment>(); // explicitly shared_ptr, dependant domain.
+
 	class Interpreter : public ExprVisitor, public StmtVisitor
 	{
 	public:
-		Interpreter() : environment(new Environment) { environment->reserve(100); }
+		Interpreter();
 		void Interpret(const StatementList&);
 
 		std::any visit(const expr::Binary&) override;
@@ -23,6 +25,7 @@ namespace lox
 		std::any visit(const expr::Variable&) override;
 		std::any visit(const expr::Assign&) override;
 		std::any visit(const expr::Logical&) override;
+		std::any visit(const expr::Call&) override;
 
 		void visit(const stmt::Expression&) override;
 		void visit(const stmt::Print&) override;

@@ -3,6 +3,19 @@
 #include <iostream>
 
 #include "Interpreter/Interpreter.hpp"
+#include "Functions/Callable.hpp"
+#include "Functions/Clock.hpp"
+
+lox::Interpreter::Interpreter()
+	: environment(globals)
+{
+	environment->reserve(100);
+
+	// Object clock_obj;
+	// clock_obj.set(lox_clock);
+	// globals->define("clock", clock_obj);
+	globals->define("clock", &internal_clock);
+}
 
 void lox::Interpreter::Interpret(const StatementList &statements)
 {
@@ -202,6 +215,25 @@ std::any lox::Interpreter::visit(const expr::Logical &exp)
 	return evaluate(*exp.right);
 }
 
+std::any lox::Interpreter::visit(const expr::Call &exp)
+{
+	Object callee = evaluate(*exp.callee);
+	std::vector<Object> arguments; arguments.reserve(exp.arguments.size());
+
+	for (const Expr &arg : exp.arguments) arguments.push_back(evaluate(*arg));
+
+	if (!std::holds_alternative<Callable::Ptr>(callee)) throw RuntimeError(exp.paren, "Expression doesn't qualify as a callable.");
+
+	Callable::Ptr function = std::get<Callable::Ptr>(callee);
+
+	if (arguments.size() != function->arity())
+		throw RuntimeError(
+			exp.paren,
+			"Wrong number of arguments to a function call, expected "
+			+ std::to_string(function->arity()) + " but got " + std::to_string(arguments.size()));
+	return function->call(*this, arguments);
+}
+
 void lox::Interpreter::visit(const stmt::Expression &stmt)
 {
 	evaluate(*stmt.expression);
@@ -243,7 +275,7 @@ void lox::Interpreter::visit(const stmt::While &stmt)
 		try {
 			execute(*stmt.body);
 		} catch(const lox::ContinueExcept&) {
-			continue;
+			continue; // so far for-loop have to be implemented on its own to support continue.
 		} catch (const lox::BreakExcept&) {
 			break;
 		}

@@ -38,7 +38,9 @@ term -> factor ( ( "-" | "+" ) factor )* ;
 factor -> unary ( ( "/" | "*" ) unary )* ;
 unary -> ( "!" | "-" | "--" | "++") unary
 	| postfix ;
-postfix -> primary ( "++" | "--" )? ; // prefix has same precedence as unary while postfix has higher
+postfix -> call ( "++" | "--" )? ; // prefix has same precedence as unary while postfix has highers
+call -> primary ( "(" arguments? ")" )* ; // chained calls supported i.e callback()()()
+arguments -> expression ( "," expression )* ;
 primary -> NUMBER | STRING | IDENTIFIER | "true" | "false" | "nil" ;
 	| "(" expression ")" ;
 */
@@ -54,6 +56,7 @@ namespace lox {
 	{
 		// using TokenQueue = std::queue <Token, std::vector<Token>>;
 		using TokenQueue = std::vector<Token>;
+		inline static constexpr unsigned ARGS_UPLIMIT = 255;
 	public:
 		Parser() : available(false) {}
 		Parser(const TokenQueue&);
@@ -120,6 +123,8 @@ namespace lox {
 		Expr factor();
 		Expr unary();
 		Expr secondary();
+		Expr call();
+		Expr finish_call(Expr callee);
 		Expr primary();
 	};
 

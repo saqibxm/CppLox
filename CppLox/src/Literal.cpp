@@ -1,8 +1,9 @@
 #include "Literal.hpp"
+#include "Functions/Callable.hpp"
 
 using namespace lox;
 
-const Literal Literal::None;
+const Object Object::None;
 
 /*
 Literal::Literal(Operand op) : literal(op)
@@ -33,27 +34,32 @@ lox::Literal::Literal(Variant value) : literal(std::move(value))
 {
 }*/
 
-void Literal::set(Operand op)
+void Object::set(Operand op)
 {
 	this->emplace<Operand>(op);
 }
 
-void Literal::set(std::string_view id)
+void Object::set(std::string_view id)
 {
 	this->emplace<std::string>(id);
 }
 
-void lox::Literal::set(std::nullptr_t)
+void lox::Object::set(std::nullptr_t)
 {
 	this->emplace<std::nullptr_t>(nullptr);
 }
 
-void lox::Literal::set(bool b)
+void lox::Object::set(bool b)
 {
 	this->emplace<bool>(b);
 }
 
-void Literal::reset()
+void lox::Object::set(Callable & callable)
+{
+	this->emplace<Callable::Ptr>(std::addressof(callable));
+}
+
+void Object::reset()
 {
 	// literal = Variant{};
 	// *this = nullptr;
@@ -69,12 +75,12 @@ std::string Literal::get_identifier() const
 	return *p;
 }
 */
-std::string Literal::get_strliteral() const
+std::string Object::get_strliteral() const
 {
 	return std::get<std::string>(*this);
 }
 
-lox::Operand Literal::get_number() const
+lox::Operand Object::get_number() const
 {
 	auto p = std::get_if<Operand>(this);
 	if(!p)
@@ -82,7 +88,7 @@ lox::Operand Literal::get_number() const
 	return *p;
 }
 
-bool lox::Literal::get_boolean() const
+bool lox::Object::get_boolean() const
 {
 	auto p = std::get_if<bool>(this);
 

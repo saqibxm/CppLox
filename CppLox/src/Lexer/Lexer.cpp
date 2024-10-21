@@ -75,7 +75,7 @@ const std::vector<lox::Token>& lox::Lexer::Scan()
 		ScanToken();
 	}
 
-	tokens.emplace_back(TokenType::EOFILE, std::string(), Literal::None, line, current);
+	tokens.emplace_back(TokenType::EOFILE, std::string(), Object::None, line, current);
 	return tokens;
 }
 
@@ -169,7 +169,7 @@ void lox::Lexer::add_token(TokenType type, Token::LiteralOptional literal) {
 	tokens.emplace_back(type, text, *literal, line, start);
 }*/
 
-void lox::Lexer::add_token(TokenType type, const Literal &literal)
+void lox::Lexer::add_token(TokenType type, const Object &literal)
 {
 	std::string text = source.substr(start, current - start);
 	tokens.emplace_back(type, text, std::move(literal), line, start);
@@ -178,7 +178,7 @@ void lox::Lexer::add_token(TokenType type, const Literal &literal)
 void lox::Lexer::add_token(TokenType type)
 {
 	// add_token(type, std::nullopt);
-	add_token(type, Literal{});
+	add_token(type, Object{});
 }
 
 void lox::Lexer::identifier()
@@ -214,7 +214,7 @@ void lox::Lexer::string()
 	std::string str = source.substr(start + 1, current - start - 1); // from start+1(") to one before closing(")
 	advance(); // consume the closing quote
 	// whether advance is called before or adter add_token has impact on automatic insertion of token lexeme
-	add_token(TokenType::STRING, Literal{ str });
+	add_token(TokenType::STRING, Object{ str });
 }
 
 void lox::Lexer::number()
@@ -252,6 +252,6 @@ void lox::Lexer::number()
 		break;
 	}
 	*/
-	add_token(TokenType::NUMBER, Literal{ num });
+	add_token(TokenType::NUMBER, Object{ num });
 	// add_token(TokenType::NUMBER, Literal{ std::stod(source.substr(start, current - start)) });
 }

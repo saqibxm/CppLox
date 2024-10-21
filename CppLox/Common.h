@@ -12,4 +12,6 @@
 namespace fs = std::filesystem;
 namespace crn = std::chrono;
 
-using Operand = double;
+namespace lox {
+	using Operand = double;
+}

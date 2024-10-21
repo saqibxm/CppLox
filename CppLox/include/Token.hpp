@@ -70,14 +70,14 @@ namespace lox {
 	{
 		friend class ASTPrinter;
 		friend class RPNPrinter;
-		using LiteralOptional = std::optional<Literal>;
+		using LiteralOptional = std::optional<Object>;
 	public:
 		/*Token(TokenType t, std::string value, LiteralOptional lit, std::size_t pos)
 			: type(t), lexeme(value), literal(std::move(lit)), position(pos)
 		{
 			;
 		}*/
-		Token(TokenType t, std::string value, const Literal &lit, std::size_t ln, std::size_t pos = -1)
+		Token(TokenType t, std::string value, const Object &lit, std::size_t ln, std::size_t pos = -1)
 			: type(t), lexeme(value), literal(lit), line(ln), position(pos)
 		{
 			;
@@ -93,7 +93,7 @@ namespace lox {
 		TokenType type = TokenType::EOFILE; // could use a separate enumerator for undefined value i.e. UNKNOWN
 		std::string lexeme;
 		// std::optional<Literal> literal;
-		Literal literal;
+		Object literal;
 		std::size_t position;/*, length*/ // both the position and length of the lexeme, the position is relative to the start of the source (first character)
 		std::size_t line;
 	};

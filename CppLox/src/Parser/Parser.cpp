@@ -317,13 +317,47 @@ lox::Expr lox::Parser::unary()
 
 lox::Expr lox::Parser::secondary()
 {
-	Expr expr = primary();
+	Expr expr = call();
 	while (match(TokenType::DOUBLE_MINUS, TokenType::DOUBLE_PLUS))
 	{
 		const auto &oper = previous();
 		return Expr(new Unary(std::move(expr), oper));
 	}
 	return expr;
+}
+
+lox::Expr lox::Parser::call()
+{
+	Expr expr = primary(); // can't do a+b(2) (call the result of a+b passing in 2), instead will have to do (a+b)(2)
+	while (true) // match(LPAREN), this looks more cleaner
+	{
+		if (match(TokenType::LPAREN)) expr = finish_call(std::move(expr));
+		else break;
+	}
+	return expr;
+}
+
+lox::Expr lox::Parser::finish_call(Expr callee)
+{
+	ExpressionList arguments;
+
+	if (!check(TokenType::RPAREN))
+	{
+		do {
+			if (arguments.size() >= ARGS_UPLIMIT) error(peek(), "Cant have more than " + std::to_string(ARGS_UPLIMIT) + " arguments in a function call.");
+			arguments.push_back(expression());
+		} while (match(TokenType::COMMA));
+	}
+	const Token &paren = consume(TokenType::RPAREN, "Expected a closing paren at the end of argument list.");
+	return Expr(new expr::Call(std::move(callee), paren, std::move(arguments)));
+
+	/*
+	while(!check(RPAREN))
+	{
+		arguments.push_back(expression());
+		advance();
+	}
+	*/
 }
 
 lox::Expr lox::Parser::primary()
