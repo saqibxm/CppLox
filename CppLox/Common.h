@@ -14,4 +14,15 @@ namespace crn = std::chrono;
 
 namespace lox {
 	using Operand = double;
+
+#pragma region DEBUG_INIDCATOR
+	constexpr const bool debug =
+#ifdef NDEBUG
+		false
+#else
+		true
+#endif
+		;
+#pragma endregion
+
 }

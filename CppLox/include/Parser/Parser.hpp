@@ -13,7 +13,10 @@
 // Conditional operator: left most side has highest precedence, middle has lowest.
 /*
 program -> declaration* EOF ;
-declaration -> varDecl | statement ;
+declaration -> funcDecl | varDecl | statement ;
+funcDecl -> "fn" function ;
+function -> IDENTIFIER? "(" parameters? ")" block ;
+parameters -> IDENTIFIER ( "," IDENTIFIER )* ;
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
 statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | controlStmt | block ;
 block -> "{" declaration* "}" ;
@@ -100,6 +103,7 @@ namespace lox {
 
 		Stmt declaration();
 		Stmt variable_decl();
+		Stmt function(const std::string&);
 		Stmt statement();
 		Stmt print_statement();
 		Stmt expression_stmt();

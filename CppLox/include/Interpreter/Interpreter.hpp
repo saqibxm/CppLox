@@ -34,6 +34,7 @@ namespace lox
 		void visit(const stmt::IfControl&) override;
 		void visit(const stmt::While&) override;
 		void visit(const stmt::LoopControl&) override;
+		void visit(const stmt::Function&) override;
 
 	private:
 		Environment::Ptr environment;

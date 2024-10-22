@@ -72,3 +72,13 @@ void lox::stmt::LoopControl::accept(StmtVisitor &visitor) const
 {
 	visitor.visit(*this);
 }
+
+lox::stmt::Function::Function(const Token &fname, const TokenList &params, StatementList &&stmts)
+	: name(fname), parameters(params), body(std::move(stmts))
+{
+}
+
+void lox::stmt::Function::accept(StmtVisitor &visitor) const
+{
+	visitor.visit(*this);
+}

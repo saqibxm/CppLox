@@ -30,6 +30,7 @@ namespace lox::stmt
 	class IfControl;
 	class While;
 	class LoopControl; // break and continue
+	class Function;
 }
 
 namespace lox
@@ -58,6 +59,7 @@ namespace lox
 		virtual void visit(const stmt::IfControl&) = 0;
 		virtual void visit(const stmt::While&) = 0;
 		virtual void visit(const stmt::LoopControl&) = 0;
+		virtual void visit(const stmt::Function&) = 0;
 	};
 
 	class ASTPrinter : public ExprVisitor

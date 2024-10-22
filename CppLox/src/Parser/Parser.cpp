@@ -2,6 +2,14 @@
 
 using namespace lox::expr;
 
+/*
+#ifndef NDEBUG
+// Need a new system to put out all the tokens of a subexpression call into a global object
+// which can later be used in diagnostics for proper highlighting and indication
+std::vector<lox::Token> lastTokens;
+#endif // !NDEBUG
+*/
+
 struct ScopedAdvance {
 	ScopedAdvance(std::size_t &obj) : target(obj) { ++target; }
 	~ScopedAdvance() { --target; }
@@ -23,6 +31,7 @@ lox::Parser& lox::Parser::operator=(const TokenQueue &tok)
 
 lox::Stmt lox::Parser::declaration() try {
 	if (match(TokenType::VAR)) return variable_decl();
+	if (match(TokenType::FN)) return function("function");
 	return statement();
 } catch (const ParseError&) {
 	synchronize();
@@ -39,6 +48,40 @@ lox::Stmt lox::Parser::variable_decl()
 	}
 	consume(TokenType::SCOLON, "Expected ';' after variable declaration.");
 	return Stmt(new stmt::Var(name, std::move(initializer)));
+}
+
+lox::Stmt lox::Parser::function(const std::string &kind)
+{
+	// for now we will not allow anonymous functions
+	Token name = consume(TokenType::IDENTIFIER, "Expected and identifier for " + kind + " name.");
+	consume(TokenType::LPAREN, "Expected '(' after " + kind + " name.");
+
+	TokenList parameters;
+	if (check(TokenType::RPAREN)) goto BLOCK;
+	do
+	{
+		if (parameters.size() >= ARGS_UPLIMIT)
+			error(peek(), kind + " can't have more than " + std::to_string(ARGS_UPLIMIT) + "parameters.");
+		parameters.push_back(consume(TokenType::IDENTIFIER, "Expected an identifier for parameter name."));
+	} while (match(TokenType::COMMA));
+	/*
+	do
+	{
+		Token param = advance();
+	} while (previous().type != TokenType::RPAREN);
+	while (!check(TokenType::RPAREN))
+	{
+		Token param = advance();
+		parameters.push_back(std::move(param));
+		if (match(TokenType::COMMA)) break;
+	}
+	*/
+	BLOCK:
+	consume(TokenType::RPAREN, "Left parentheses ')' required to close parameter list.");
+	consume(TokenType::LBRACE, kind + " body starts with a '{'");
+	StatementList body = block();
+	// stmt::Block body = block();
+	return Stmt(new stmt::Function(name, parameters, std::move(body)));
 }
 
 lox::Stmt lox::Parser::statement()
@@ -329,10 +372,22 @@ lox::Expr lox::Parser::secondary()
 lox::Expr lox::Parser::call()
 {
 	Expr expr = primary(); // can't do a+b(2) (call the result of a+b passing in 2), instead will have to do (a+b)(2)
-	while (true) // match(LPAREN), this looks more cleaner
+
+#ifndef NDEBUG
+	Token name = previous(); // since no default constructor, just a circumvention
+	if (auto var = dynamic_cast<expr::Variable*>(expr.get()))
+	name = var->name;
+#endif // !NDEBUG
+
+	while (true) // match(LPAREN), this would look more cleaner
 	{
 		if (match(TokenType::LPAREN)) expr = finish_call(std::move(expr));
 		else break;
+	}
+	if constexpr (debug) {
+		if (auto func = dynamic_cast<expr::Call*>(expr.get()))
+			func->paren = name;
+	// dynamic_cast<expr::Call*>(expr.get())->paren = name;
 	}
 	return expr;
 }
@@ -373,6 +428,12 @@ lox::Expr lox::Parser::primary()
 	//	while (count > 1) advance(), --count; // stray semicolon
 	//	return nullptr;
 	//}
+
+	/*
+	#ifndef NDEBUG
+	lastTokens.push_back(peek());
+	#endif // !NDEBUG
+	*/
 
 	if (match(TokenType::TRUE)) return Expr(new Value(true));
 	if (match(TokenType::FALSE)) return Expr(new Value(false));

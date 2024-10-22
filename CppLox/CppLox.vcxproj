@@ -176,6 +176,7 @@
     <ClInclude Include="include\Environment\Environment.hpp" />
     <ClInclude Include="include\Functions\Callable.hpp" />
     <ClInclude Include="include\Functions\Clock.hpp" />
+    <ClInclude Include="include\Functions\Exit.hpp" />
     <ClInclude Include="include\Interpreter\Interpreter.hpp" />
     <ClInclude Include="include\Common\Statement.hpp" />
     <ClInclude Include="include\Lexer\Lexer.hpp" />

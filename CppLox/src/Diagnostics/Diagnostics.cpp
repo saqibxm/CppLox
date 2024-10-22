@@ -214,4 +214,28 @@ void lox::Diagnostics::Error(std::size_t line, std::size_t pos, std::string_view
 
 	std::cerr << '\t' << fault << "\n\t";
 	indicate(os, fault, lineInfo.length(), pos, len) << '\n' << std::endl;
+
+void RuntimeError(const lox::RuntimeError&);
+void lox::Diagnostics::Error(const std::vector<Token> &tokens, const std::string &msg)
+{
+	auto start = tokens.front().get_pos();
+	auto line = tokens.front().get_line();
+	auto pos = start;
+	auto len = tokens.back().get_pos() + tokens.back().get_len() - start;
+
+	auto &os = std::cerr;
+	os << msg << std::endl;
+	for (const auto &token : tokens) os << token.lexeme;
+	os << std::endl;
+	std::string::size_type marker = 0;
+	constexpr std::string::value_type wspace = ' ', underline = '_', indicator = '~';
+
+	while (marker < pos) { os.put(wspace); ++marker; }
+	while (marker < start + pos) { os.put(len > 1 ? underline : wspace); ++marker; }
+
+	for (auto i = len; i != 0; --i) os.put(indicator);
+	marker += len;
+		// while (marker++ < msg.length()) os.put(underline);
+	os << std::endl;
+}
 */

@@ -5,17 +5,19 @@
 #include <string>
 
 #include "Common.h"
-#include "Functions/Callable.hpp"
 // #include <sstream>
 
 namespace lox {
+
+	struct Callable;
+	using CallablePtr = std::shared_ptr<Callable>;
 	template <typename R, typename V>
 	R get_type(const V& variant)
 	{
 		return std::get<R>(variant);
 	}
 
-using Variant = std::variant<std::monostate, std::nullptr_t, bool, Operand, std::string, Callable::Ptr>;
+using Variant = std::variant<std::monostate, std::nullptr_t, bool, Operand, std::string, CallablePtr>;
 struct Object : public Variant
 {
 	using Base = Variant;
@@ -24,43 +26,7 @@ struct Object : public Variant
 	// template <typename T, typename...Args>
 	// explicit AlternateLiteral(std::in_place_type_t<T> ipt, Args&&...args) : Base(std::move(ipt), std::forward<Args>(args)...) {}
 
-	std::string str() const {
-		auto s = std::visit([](const auto &v) -> std::string {
-			using T = std::decay_t<decltype(v)>;
-			if constexpr (std::is_same_v<T, Operand>)
-			{
-				auto str = std::to_string(v);
-				if (std::string::size_type pos = str.find_last_not_of('0');
-					pos != std::string::npos/* && str[pos] == '.'*/)
-				{
-					if (str[pos] != '.') ++pos;
-					str.erase(pos, str.length() - pos);
-				}
-				return str;
-			}
-			else if constexpr (std::is_same_v<T, std::string>)
-			{
-				return v;
-			}
-			else if constexpr (std::is_same_v<T, Callable::Ptr>)
-			{
-				return v->to_string();
-				// return std::to_string((unsigned)v);
-			}
-			else if constexpr (std::is_same_v<T, std::nullptr_t>)
-			{
-				return "null";
-			}
-			else if constexpr (std::is_same_v<T, bool>)
-			{
-				return v ? "true" : "false";
-			}
-			else return {};
-		}, static_cast<const Base&>(*this));
-
-		return s;
-	}
-
+	std::string str() const;
 	void set(std::nullptr_t);
 	void set(Operand op);
 	void set(bool b);

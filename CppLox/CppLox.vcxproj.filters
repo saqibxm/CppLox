@@ -107,5 +107,8 @@
     <ClInclude Include="include\Functions\Clock.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Functions\Exit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

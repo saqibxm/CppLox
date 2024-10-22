@@ -45,7 +45,7 @@ public:
 	void SetSource(std::string&&) = delete;
 
 	void Report(Type, std::size_t, const std::string&);
-	void Report(Type, std::size_t, std::string_view, const std::string&); // line where and what variation
+	// void Report(Type, std::size_t, std::string_view, const std::string&); // line where and what variation
 
 	void Error(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Error(std::string_view msg, std::size_t line, std::size_t pos);
@@ -53,7 +53,7 @@ public:
 	void Error(Token, const std::string&);
 
 	void RuntimeError(const lox::RuntimeError&);
-	void RuntimeError(const Object&, const std::string&);
+	// void RuntimeError(const Object&, const std::string&);
 
 	void Warn(std::size_t line, std::size_t pos, std::string_view msg); // line number and starting position
 	// void Warn(std::string_view msg, std::size_t line, std::size_t pos);

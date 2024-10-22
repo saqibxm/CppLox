@@ -5,6 +5,7 @@
 #include "Interpreter/Interpreter.hpp"
 #include "Functions/Callable.hpp"
 #include "Functions/Clock.hpp"
+#include "Functions/Exit.hpp"
 
 lox::Interpreter::Interpreter()
 	: environment(globals)
@@ -14,7 +15,10 @@ lox::Interpreter::Interpreter()
 	// Object clock_obj;
 	// clock_obj.set(lox_clock);
 	// globals->define("clock", clock_obj);
-	globals->define("clock", &internal_clock);
+	NativeFunction::Ptr internal_clock(new Clock);
+	NativeFunction::Ptr internal_exit(new Exit);
+	globals->define("clock", internal_clock); // type is shared_ptr
+	globals->define("exit", internal_exit);
 }
 
 void lox::Interpreter::Interpret(const StatementList &statements)
@@ -229,8 +233,13 @@ std::any lox::Interpreter::visit(const expr::Call &exp)
 	if (arguments.size() != function->arity())
 		throw RuntimeError(
 			exp.paren,
-			"Wrong number of arguments to a function call, expected "
-			+ std::to_string(function->arity()) + " but got " + std::to_string(arguments.size()));
+			"Invalid number of arguments to function " + function->to_string() + ", expected "
+			+ std::to_string(function->arity()) + " got " + std::to_string(arguments.size()) + '.');
+
+	// Right now Object variant stores a pointer to Callable which is not right and has high chance to cause
+	// lifetime issues, perhaps a shared_ptr with Callable interface being enabled with shared_from_this
+	// would have been better with the callable object allocated on free store but anyways
+	// soon it will be changed to an object which stores more information about the stored callable
 	return function->call(*this, arguments);
 }
 
@@ -287,6 +296,10 @@ void lox::Interpreter::visit(const stmt::LoopControl &stmt)
 	if (stmt.control == stmt::LoopControl::BREAK)
 		throw BreakExcept();
 	else throw ContinueExcept();
+}
+
+void lox::Interpreter::visit(const stmt::Function &stmt)
+{
 }
 
 void lox::Interpreter::execute(const stmt::Statement &stmt)

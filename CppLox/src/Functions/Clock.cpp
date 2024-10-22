@@ -1,9 +1,9 @@
-#include "Literal.hpp"
 #include "Functions/Clock.hpp"
 
-lox::Clock lox::internal_clock;
+// lox::Clock lox::internal_clock;
+// extern lox::NativeFunction::Ptr lox::internal_clock = std::make_shared<lox::Clock>();
 
-lox::Object lox::Clock::call(Interpreter & interpreter, std::vector<Object>& arguments)
+lox::Object lox::Clock::call(Interpreter & interpreter, const std::vector<Object>& arguments)
 {
 	auto duration = ClockType::now() - start;
 

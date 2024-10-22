@@ -7,15 +7,16 @@
 namespace lox {
 	using Stmt = std::unique_ptr<stmt::Statement>;
 	using StatementList = std::vector<Stmt>;
+	using TokenList = std::vector<Token>;
 
 	struct BreakExcept final : public std::exception
 	{
-		BreakExcept() : std::exception("break encountered") {}
+		BreakExcept() = default;
 	};
 
 	struct ContinueExcept : public std::exception
 	{
-		ContinueExcept() : std::exception("continue encountered") {}
+		ContinueExcept() = default; // : std::exception("continue encountered") {}
 	};
 }
 
@@ -96,5 +97,17 @@ namespace lox::stmt
 		void accept(StmtVisitor&) const override;
 
 		Type control;
+	};
+
+	class Function final : public Statement
+	{
+	public:
+		Function(const Token&, const TokenList&, StatementList&&);
+		void accept(StmtVisitor&) const override;
+
+		Token name;
+		TokenList parameters;
+		StatementList body;
+		// Block body;
 	};
 }
