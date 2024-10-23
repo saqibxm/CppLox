@@ -5,12 +5,13 @@
 
 #include "Common.h"
 #include "Literal.hpp"
+#include "Interpreter/Interpreter.hpp"
 
 namespace lox
 {
 	class Interpreter;
 
-	struct Callable
+	struct Callable // : std::enable_shared_from_this<Callable>
 	{
 		using RawPtr = std::add_pointer_t<Callable>;
 		using Ptr = CallablePtr; // std::shared_ptr<Callable>;
@@ -19,7 +20,7 @@ namespace lox
 		virtual unsigned arity() const noexcept = 0;
 		virtual std::string to_string() const {
 			// to be converted to hex, TODO use fmtlib
-			return "<0x" + std::to_string(reinterpret_cast<std::uintptr_t>(std::addressof(*this))) + ">";
+			return "<callable>";
 		}
 	};
 

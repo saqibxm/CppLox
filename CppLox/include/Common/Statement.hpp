@@ -27,7 +27,9 @@ namespace lox::stmt
 	struct Statement
 	{
 		virtual ~Statement() = default;
-		virtual void accept(StmtVisitor&) const = 0;
+		// virtual void accept(StmtVisitor&) const = 0;
+		// virtual Statement* clone() const = 0;
+		virtual void accept(StmtVisitor&) = 0;
 	};
 
 	class Expression final : public Statement
@@ -35,7 +37,7 @@ namespace lox::stmt
 	public:
 		Expression(Expr&&);
 		Expr expression;
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 	};
 
 	class Print final : public Statement
@@ -44,7 +46,7 @@ namespace lox::stmt
 		Print(Expr&&);
 		Expr expression;
 
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 	};
 
 	class Var : public Statement
@@ -52,7 +54,7 @@ namespace lox::stmt
 	public:
 		Var(const Token&, Expr&&);
 
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		Token name;
 		Expr initializer;
@@ -62,7 +64,7 @@ namespace lox::stmt
 	{
 	public:
 		Block(StatementList&&);
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		StatementList statements;
 	};
@@ -71,7 +73,7 @@ namespace lox::stmt
 	{
 	public:
 		IfControl(Expr&&, Stmt&&, Stmt&&);
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		Expr condition;
 		Stmt then_stmt;
@@ -82,7 +84,7 @@ namespace lox::stmt
 	{
 	public:
 		While(Expr&&, Stmt&&);
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		Expr condition;
 		Stmt body;
@@ -94,7 +96,7 @@ namespace lox::stmt
 		enum Type { CONTINUE, BREAK };
 
 		LoopControl(Type);
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		Type control;
 	};
@@ -103,7 +105,7 @@ namespace lox::stmt
 	{
 	public:
 		Function(const Token&, const TokenList&, StatementList&&);
-		void accept(StmtVisitor&) const override;
+		void accept(StmtVisitor&) override;
 
 		Token name;
 		TokenList parameters;

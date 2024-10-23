@@ -8,10 +8,11 @@
 
 namespace lox
 {
-	inline Environment::Ptr globals = std::make_shared<Environment>(); // explicitly shared_ptr, dependant domain.
 
 	class Interpreter : public ExprVisitor, public StmtVisitor
 	{
+		friend class LoxFunction;
+		static inline Environment::Ptr globals = std::make_shared<Environment>(); // explicitly shared_ptr, dependant domain.
 	public:
 		Interpreter();
 		void Interpret(const StatementList&);
@@ -27,20 +28,20 @@ namespace lox
 		std::any visit(const expr::Logical&) override;
 		std::any visit(const expr::Call&) override;
 
-		void visit(const stmt::Expression&) override;
-		void visit(const stmt::Print&) override;
-		void visit(const stmt::Var&) override;
-		void visit(const stmt::Block&) override;
-		void visit(const stmt::IfControl&) override;
-		void visit(const stmt::While&) override;
-		void visit(const stmt::LoopControl&) override;
-		void visit(const stmt::Function&) override;
+		void visit(stmt::Expression&) override;
+		void visit(stmt::Print&) override;
+		void visit(stmt::Var&) override;
+		void visit(stmt::Block&) override;
+		void visit(stmt::IfControl&) override;
+		void visit(stmt::While&) override;
+		void visit(stmt::LoopControl&) override;
+		void visit(stmt::Function&) override;
 
 	private:
 		Environment::Ptr environment;
 
-		void execute(const stmt::Statement&);
-		void execute_block(const StatementList& list, Environment::Ptr env);
+		void execute(stmt::Statement&);
+		void execute_block(StatementList& list, Environment::Ptr env);
 		Object evaluate(const expr::Expression&);
 
 		static bool is_true(const Object&);

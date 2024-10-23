@@ -8,7 +8,7 @@ stmt::Expression::Expression(Expr &&expr)
 {
 }
 
-void lox::stmt::Expression::accept(StmtVisitor &visitor) const
+void lox::stmt::Expression::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -18,7 +18,7 @@ Print::Print(Expr &&expr)
 {
 }
 
-void lox::stmt::Print::accept(StmtVisitor &visitor) const
+void lox::stmt::Print::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -28,7 +28,7 @@ lox::stmt::Var::Var(const Token &vname, Expr &&init)
 {
 }
 
-void lox::stmt::Var::accept(StmtVisitor &visitor) const
+void lox::stmt::Var::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -38,7 +38,7 @@ lox::stmt::Block::Block(StatementList &&stmts)
 {
 }
 
-void lox::stmt::Block::accept(StmtVisitor &visitor) const
+void lox::stmt::Block::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -48,7 +48,7 @@ lox::stmt::IfControl::IfControl(Expr &&cond, Stmt &&ifbody, Stmt &&elsebody)
 {
 }
 
-void lox::stmt::IfControl::accept(StmtVisitor &visitor) const
+void lox::stmt::IfControl::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -58,7 +58,7 @@ lox::stmt::While::While(Expr &&cond, Stmt && body)
 {
 }
 
-void lox::stmt::While::accept(StmtVisitor &visitor) const
+void lox::stmt::While::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -68,7 +68,7 @@ lox::stmt::LoopControl::LoopControl(Type type)
 {
 }
 
-void lox::stmt::LoopControl::accept(StmtVisitor &visitor) const
+void lox::stmt::LoopControl::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
@@ -78,7 +78,7 @@ lox::stmt::Function::Function(const Token &fname, const TokenList &params, State
 {
 }
 
-void lox::stmt::Function::accept(StmtVisitor &visitor) const
+void lox::stmt::Function::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }

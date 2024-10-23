@@ -52,14 +52,14 @@ namespace lox
 
 	struct StmtVisitor
 	{
-		virtual void visit(const stmt::Expression&) = 0;
-		virtual void visit(const stmt::Print&) = 0;
-		virtual void visit(const stmt::Var&) = 0;
-		virtual void visit(const stmt::Block&) = 0;
-		virtual void visit(const stmt::IfControl&) = 0;
-		virtual void visit(const stmt::While&) = 0;
-		virtual void visit(const stmt::LoopControl&) = 0;
-		virtual void visit(const stmt::Function&) = 0;
+		virtual void visit(stmt::Expression&) = 0;
+		virtual void visit(stmt::Print&) = 0;
+		virtual void visit(stmt::Var&) = 0;
+		virtual void visit(stmt::Block&) = 0;
+		virtual void visit(stmt::IfControl&) = 0;
+		virtual void visit(stmt::While&) = 0;
+		virtual void visit(stmt::LoopControl&) = 0;
+		virtual void visit(stmt::Function&) = 0;
 	};
 
 	class ASTPrinter : public ExprVisitor

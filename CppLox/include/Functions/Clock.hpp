@@ -21,8 +21,10 @@ namespace lox {
 
 	// extern Clock internal_clock; // this here is a global variable with static initialization so when you
 	// include it in other TUs by that time it is initialized
+
 	// inline NativeFunction::Ptr internal_clock = std::make_shared<Clock>();
 	// extern NativeFunction::Ptr internal_clock; // hit by static initialization order fiasco
-	// actually just that these objects are allocated at runtime not link/compile time
+
+	// to counter one can provide a function which has static object of type and returns reference to it.
 }
 

@@ -220,6 +220,20 @@ lox::StatementList lox::Parser::block()
 	return statements;
 }
 
+lox::Expr lox::Parser::separation()
+{
+	Expr expr = assignment();
+
+	while (match(TokenType::COMMA))
+	{
+		const auto &oper = previous(); // get the comma operator's token
+		Expr right = assignment();
+		expr.reset(new Binary(std::move(expr), oper, std::move(right)));
+		// TODO decide whether to use a special node for comma.
+	}
+	return expr;
+}
+
 lox::Expr lox::Parser::assignment()
 {
 	Expr exp = logic_or();
@@ -265,7 +279,7 @@ lox::Expr lox::Parser::logic_and()
 
 lox::Expr lox::Parser::conditional()
 {
-	Expr expr = separation();
+	Expr expr = equality();
 	if (match(TokenType::QMARK))
 	{
 		Expr left = expression();
@@ -274,20 +288,6 @@ lox::Expr lox::Parser::conditional()
 		// if (oper.type != TokenType::COLON) throw error(oper, "Expected a colon!");
 		Expr right = conditional();
 		expr.reset(new Conditional(std::move(expr), std::move(left), std::move(right)));
-	}
-	return expr;
-}
-
-lox::Expr lox::Parser::separation()
-{
-	Expr expr = equality();
-
-	while (match(TokenType::COMMA))
-	{
-		const auto &oper = previous(); // get the comma operator's token
-		Expr right = equality();
-		expr.reset(new Binary(std::move(expr), oper, std::move(right)));
-		// TODO decide whether to use a special node for comma.
 	}
 	return expr;
 }
@@ -400,7 +400,7 @@ lox::Expr lox::Parser::finish_call(Expr callee)
 	{
 		do {
 			if (arguments.size() >= ARGS_UPLIMIT) error(peek(), "Cant have more than " + std::to_string(ARGS_UPLIMIT) + " arguments in a function call.");
-			arguments.push_back(expression());
+			arguments.push_back(assignment()); // arguments.push_back(expression()); changed to disallow comma to be interpreted as an operator
 		} while (match(TokenType::COMMA));
 	}
 	const Token &paren = consume(TokenType::RPAREN, "Expected a closing paren at the end of argument list.");

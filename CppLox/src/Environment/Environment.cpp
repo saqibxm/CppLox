@@ -13,7 +13,7 @@ void lox::Environment::define(const std::string &name, const Object &init)
 
 const lox::Object& lox::Environment::retrieve(const Token & name) const
 {
-	const auto& obj = get(name);
+	auto &obj = get(name);
 	if (obj.empty()) throw RuntimeError(name, "Uninitialized variable '" + name.lexeme + "' used.");
 	return obj;
 }

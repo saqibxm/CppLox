@@ -116,11 +116,11 @@ namespace lox {
 		Expr expression() {
 			return assignment();
 		}
+		Expr separation();
 		Expr assignment();
 		Expr logic_or();
 		Expr logic_and();
 		Expr conditional();
-		Expr separation();
 		Expr equality();
 		Expr comparison();
 		Expr term();

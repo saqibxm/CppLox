@@ -3,7 +3,9 @@
 #include <iostream>
 
 #include "Interpreter/Interpreter.hpp"
+
 #include "Functions/Callable.hpp"
+#include "Functions/LoxFunction.hpp"
 #include "Functions/Clock.hpp"
 #include "Functions/Exit.hpp"
 
@@ -17,8 +19,8 @@ lox::Interpreter::Interpreter()
 	// globals->define("clock", clock_obj);
 	NativeFunction::Ptr internal_clock(new Clock);
 	NativeFunction::Ptr internal_exit(new Exit);
-	globals->define("clock", internal_clock); // type is shared_ptr
-	globals->define("exit", internal_exit);
+	globals->define("clock", std::move(internal_clock)); // type is shared_ptr
+	globals->define("exit", std::move(internal_exit));
 }
 
 void lox::Interpreter::Interpret(const StatementList &statements)
@@ -102,6 +104,11 @@ std::any lox::Interpreter::visit(const expr::Binary &expr)
 
 	case TokenType::NOT_EQUAL:
 		return Object{ !are_equal(left, right) };
+		break;
+
+	case TokenType::COMMA:
+		return right;
+		break;
 
 	default:
 		UNREACHABLE();
@@ -243,18 +250,18 @@ std::any lox::Interpreter::visit(const expr::Call &exp)
 	return function->call(*this, arguments);
 }
 
-void lox::Interpreter::visit(const stmt::Expression &stmt)
+void lox::Interpreter::visit(stmt::Expression &stmt)
 {
 	evaluate(*stmt.expression);
 }
 
-void lox::Interpreter::visit(const stmt::Print &stmt)
+void lox::Interpreter::visit(stmt::Print &stmt)
 {
 	Object value = evaluate(*stmt.expression);
 	std::cout << value.str() << std::endl;
 }
 
-void lox::Interpreter::visit(const stmt::Var &stmt)
+void lox::Interpreter::visit(stmt::Var &stmt)
 {
 	Object init; // default init to null
 	if (stmt.initializer != nullptr) init = evaluate(*stmt.initializer);
@@ -262,13 +269,13 @@ void lox::Interpreter::visit(const stmt::Var &stmt)
 	environment->define(stmt.name.lexeme, init);
 }
 
-void lox::Interpreter::visit(const stmt::Block &stmt)
+void lox::Interpreter::visit(stmt::Block &stmt)
 {
 	Environment::Ptr scope = std::make_shared<Environment>(environment); // environment->shared_from_this()
 	execute_block(stmt.statements, scope);
 }
 
-void lox::Interpreter::visit(const stmt::IfControl &stmt)
+void lox::Interpreter::visit(stmt::IfControl &stmt)
 {
 	auto condition = evaluate(*stmt.condition);
 
@@ -276,7 +283,7 @@ void lox::Interpreter::visit(const stmt::IfControl &stmt)
 	else if(stmt.else_stmt != nullptr) execute(*stmt.else_stmt);
 }
 
-void lox::Interpreter::visit(const stmt::While &stmt)
+void lox::Interpreter::visit(stmt::While &stmt)
 {
 	// auto condition = evaluate(*stmt.condition); // donot evaluate once, evalute on every iteration.
 	while (is_true(evaluate(*stmt.condition)))
@@ -291,23 +298,26 @@ void lox::Interpreter::visit(const stmt::While &stmt)
 	}
 }
 
-void lox::Interpreter::visit(const stmt::LoopControl &stmt)
+void lox::Interpreter::visit(stmt::LoopControl &stmt)
 {
 	if (stmt.control == stmt::LoopControl::BREAK)
 		throw BreakExcept();
 	else throw ContinueExcept();
 }
 
-void lox::Interpreter::visit(const stmt::Function &stmt)
+void lox::Interpreter::visit(stmt::Function &stmt)
 {
+	auto function = std::make_shared<LoxFunction>(stmt);
+	environment->define(function->name(), Object{std::in_place_type<CallablePtr>, function});
+	// register the name into environment, not global but current
 }
 
-void lox::Interpreter::execute(const stmt::Statement &stmt)
+void lox::Interpreter::execute(stmt::Statement &stmt)
 {
 	stmt.accept(*this);
 }
 
-void lox::Interpreter::execute_block(const StatementList & list, Environment::Ptr env)
+void lox::Interpreter::execute_block(StatementList & list, Environment::Ptr env)
 {
 	struct ScopedAssignment
 	{
