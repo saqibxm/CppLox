@@ -250,18 +250,18 @@ std::any lox::Interpreter::visit(const expr::Call &exp)
 	return function->call(*this, arguments);
 }
 
-void lox::Interpreter::visit(stmt::Expression &stmt)
+void lox::Interpreter::visit(const stmt::Expression &stmt)
 {
 	evaluate(*stmt.expression);
 }
 
-void lox::Interpreter::visit(stmt::Print &stmt)
+void lox::Interpreter::visit(const stmt::Print &stmt)
 {
 	Object value = evaluate(*stmt.expression);
 	std::cout << value.str() << std::endl;
 }
 
-void lox::Interpreter::visit(stmt::Var &stmt)
+void lox::Interpreter::visit(const stmt::Var &stmt)
 {
 	Object init; // default init to null
 	if (stmt.initializer != nullptr) init = evaluate(*stmt.initializer);
@@ -269,13 +269,13 @@ void lox::Interpreter::visit(stmt::Var &stmt)
 	environment->define(stmt.name.lexeme, init);
 }
 
-void lox::Interpreter::visit(stmt::Block &stmt)
+void lox::Interpreter::visit(const stmt::Block &stmt)
 {
 	Environment::Ptr scope = std::make_shared<Environment>(environment); // environment->shared_from_this()
 	execute_block(stmt.statements, scope);
 }
 
-void lox::Interpreter::visit(stmt::IfControl &stmt)
+void lox::Interpreter::visit(const stmt::IfControl &stmt)
 {
 	auto condition = evaluate(*stmt.condition);
 
@@ -283,7 +283,7 @@ void lox::Interpreter::visit(stmt::IfControl &stmt)
 	else if(stmt.else_stmt != nullptr) execute(*stmt.else_stmt);
 }
 
-void lox::Interpreter::visit(stmt::While &stmt)
+void lox::Interpreter::visit(const stmt::While &stmt)
 {
 	// auto condition = evaluate(*stmt.condition); // donot evaluate once, evalute on every iteration.
 	while (is_true(evaluate(*stmt.condition)))
@@ -298,16 +298,17 @@ void lox::Interpreter::visit(stmt::While &stmt)
 	}
 }
 
-void lox::Interpreter::visit(stmt::LoopControl &stmt)
+void lox::Interpreter::visit(const stmt::LoopControl &stmt)
 {
 	if (stmt.control == stmt::LoopControl::BREAK)
 		throw BreakExcept();
 	else throw ContinueExcept();
 }
 
-void lox::Interpreter::visit(stmt::Function &stmt)
+void lox::Interpreter::visit(const stmt::Function &stmt)
 {
-	auto function = std::make_shared<LoxFunction>(stmt);
+	// fine since original object is non const
+	auto function = std::make_shared<LoxFunction>(const_cast<stmt::Function&>(stmt));
 	environment->define(function->name(), Object{std::in_place_type<CallablePtr>, function});
 	// register the name into environment, not global but current
 }
@@ -317,7 +318,7 @@ void lox::Interpreter::execute(stmt::Statement &stmt)
 	stmt.accept(*this);
 }
 
-void lox::Interpreter::execute_block(StatementList & list, Environment::Ptr env)
+void lox::Interpreter::execute_block(const StatementList & list, Environment::Ptr env)
 {
 	struct ScopedAssignment
 	{
