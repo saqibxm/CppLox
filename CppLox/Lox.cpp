@@ -34,6 +34,7 @@ void lox::Run(const std::string &source)
 
 void lox::RunPrompt()
 {
+	repl = true;
 	std::string line;
 
 	while (std::cout << ">>> " && std::getline(std::cin, line))

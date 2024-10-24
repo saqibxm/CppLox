@@ -11,7 +11,7 @@
 
 namespace lox
 {
-	class Environment : public std::enable_shared_from_this<Environment>
+	class Environment // : public std::enable_shared_from_this<Environment>
 	{
 		using Storage = std::unordered_map<std::string, Object>;
 	public:

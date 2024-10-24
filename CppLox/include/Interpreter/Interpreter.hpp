@@ -8,11 +8,11 @@
 
 namespace lox
 {
-
 	class Interpreter : public ExprVisitor, public StmtVisitor
 	{
 		friend class LoxFunction;
-		static inline Environment::Ptr globals = std::make_shared<Environment>(); // explicitly shared_ptr, dependant domain.
+		const Environment::Ptr globals = std::make_shared<Environment>(); // explicitly shared_ptr, dependant domain.
+
 	public:
 		Interpreter();
 		void Interpret(const StatementList&);
@@ -53,3 +53,11 @@ namespace lox
 	};
 
 }
+
+/*
+inline lox::Environment::Ptr& global_env()
+	{
+		static lox::Environment::Ptr globals = std::make_shared<lox::Environment>();
+		return globals; // circumvent static init order fiasco
+	}
+*/

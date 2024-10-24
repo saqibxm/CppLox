@@ -15,8 +15,10 @@ namespace lox
 	{
 		using RawPtr = std::add_pointer_t<Callable>;
 		using Ptr = CallablePtr; // std::shared_ptr<Callable>;
+		using ArgumentList = std::vector<Object>;
 
-		virtual Object call(Interpreter &interpreter, [[maybe_unused]] const std::vector<Object> &arguments) = 0;
+		virtual ~Callable() = default;
+		virtual Object call(Interpreter &interpreter, [[maybe_unused]] const ArgumentList &arguments) = 0;
 		virtual unsigned arity() const noexcept = 0;
 		virtual std::string to_string() const {
 			// to be converted to hex, TODO use fmtlib
@@ -29,6 +31,7 @@ namespace lox
 		using Ptr = std::shared_ptr<NativeFunction>;
 
 		NativeFunction(const std::string&);
+		virtual ~NativeFunction() = default;
 		const std::string name;
 
 		virtual std::string to_string() const override {

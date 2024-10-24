@@ -116,5 +116,8 @@
     <ClInclude Include="include\Functions\LoxFunction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Functions\Random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

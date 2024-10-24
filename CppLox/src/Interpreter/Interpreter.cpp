@@ -8,6 +8,7 @@
 #include "Functions/LoxFunction.hpp"
 #include "Functions/Clock.hpp"
 #include "Functions/Exit.hpp"
+#include "Functions/Random.hpp"
 
 lox::Interpreter::Interpreter()
 	: environment(globals)
@@ -19,8 +20,11 @@ lox::Interpreter::Interpreter()
 	// globals->define("clock", clock_obj);
 	NativeFunction::Ptr internal_clock(new Clock);
 	NativeFunction::Ptr internal_exit(new Exit);
+	NativeFunction::Ptr internal_random(new Random);
+
 	globals->define("clock", std::move(internal_clock)); // type is shared_ptr
 	globals->define("exit", std::move(internal_exit));
+	globals->define("random", std::move(internal_random));
 }
 
 void lox::Interpreter::Interpret(const StatementList &statements)
@@ -325,7 +329,7 @@ void lox::Interpreter::execute_block(const StatementList & list, Environment::Pt
 		ScopedAssignment(Environment::Ptr &target, Environment::Ptr &replacement)
 			: target(target), previous(target)
 		{
-			target = replacement;
+			this->target = replacement;
 		}
 		~ScopedAssignment()
 		{

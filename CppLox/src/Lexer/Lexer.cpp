@@ -253,5 +253,5 @@ void lox::Lexer::number()
 	}
 	*/
 	add_token(TokenType::NUMBER, Object{ num });
-	// add_token(TokenType::NUMBER, Literal{ std::stod(source.substr(start, current - start)) });
+	// add_token(TokenType::NUMBER, Literal{ std::stod(source.substr(start, current - start)) }); // for clang
 }

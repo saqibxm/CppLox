@@ -13,6 +13,7 @@ namespace fs = std::filesystem;
 namespace crn = std::chrono;
 
 namespace lox {
+	inline bool repl = false;
 	using Operand = double;
 
 #pragma region DEBUG_INIDCATOR

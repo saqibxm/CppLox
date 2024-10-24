@@ -2,7 +2,6 @@
 #include <exception>
 
 #include "Diagnostics/Diagnostics.hpp"
-#include "Interpreter/Interpreter.hpp"
 
 using namespace lox;
 

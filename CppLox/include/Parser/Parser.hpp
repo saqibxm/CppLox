@@ -68,7 +68,7 @@ namespace lox {
 		StatementList Parse() {
 			if (!available) throw std::invalid_argument("No tokens to parse.");
 
-			StatementList statements; statements.reserve(100);
+			StatementList statements; statements.reserve(repl ? 2 : 100);
 			while (!at_end()) statements.push_back(declaration());
 			return statements;
 			/*

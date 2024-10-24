@@ -27,8 +27,8 @@ namespace lox::stmt
 	struct Statement
 	{
 		virtual ~Statement() = default;
-		// virtual void accept(StmtVisitor&) const = 0;
 		// virtual Statement* clone() const = 0;
+		// virtual void accept(StmtVisitor&) const = 0;
 		virtual void accept(StmtVisitor&) = 0;
 	};
 
