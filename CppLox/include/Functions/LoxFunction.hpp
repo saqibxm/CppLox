@@ -9,7 +9,7 @@ namespace lox
 	class LoxFunction : public Callable
 	{
 	public:
-		LoxFunction(stmt::Function& decl);
+		LoxFunction(stmt::Function& decl, Environment::Ptr closure);
 
 		Object call(Interpreter&, const std::vector<Object>&) override;
 		unsigned arity() const noexcept override { return declaration.parameters.size(); }
@@ -18,5 +18,6 @@ namespace lox
 
 	private:
 		stmt::Function declaration;
+		const Environment::Ptr closure;
 	};
 }

@@ -91,6 +91,7 @@ lox::Stmt lox::Parser::statement()
 	if (match(TokenType::FOR)) return for_loop();
 	if (match(TokenType::PRINT)) return print_statement();
 	if (match(TokenType::BREAK, TokenType::CONTINUE)) return loop_control();
+	if (match(TokenType::RETURN)) return return_stmt();
 	if (match(TokenType::LBRACE)) return Stmt(new stmt::Block(block()));
 	return expression_stmt();
 }
@@ -206,6 +207,17 @@ lox::Stmt lox::Parser::loop_control()
 	if (loop_count == 0) error(oper, '\'' + oper.lexeme + "' statement outside the loop.");
 	consume(TokenType::SCOLON, "Expected a ';' after " + util::to_string(oper.type) + '.');
 	return Stmt(new stmt::LoopControl(oper.type == TokenType::BREAK ? stmt::LoopControl::BREAK : stmt::LoopControl::CONTINUE));
+}
+
+lox::Stmt lox::Parser::return_stmt()
+{
+	Token keyword = previous();
+	Expr value = nullptr;
+
+	if (!check(TokenType::SCOLON)) value = expression();
+	consume(TokenType::SCOLON, "Expected ';' after return value.");
+
+	return Stmt(new stmt::Return(keyword, std::move(value)));
 }
 
 lox::StatementList lox::Parser::block()

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <cctype>
-#include <unordered_map>
+#include <map>
 
 #include "Token.hpp"
 #include "Diagnostics/Diagnostics.hpp"
@@ -35,7 +35,7 @@ private:
 	std::size_t current;
 	std::size_t line;
 
-	static const std::unordered_map<std::string, TokenType> keywords;
+	static const std::map<std::string, TokenType> keywords;
 
 	bool at_end() const { return current >= source.length(); }
 

@@ -82,3 +82,13 @@ void lox::stmt::Function::accept(StmtVisitor &visitor)
 {
 	visitor.visit(*this);
 }
+
+lox::stmt::Return::Return(const Token &kw, Expr &&exp)
+	: keyword(kw), value(std::move(exp))
+{
+}
+
+void lox::stmt::Return::accept(StmtVisitor &visitor)
+{
+	visitor.visit(*this);
+}

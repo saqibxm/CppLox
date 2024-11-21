@@ -312,9 +312,17 @@ void lox::Interpreter::visit(const stmt::LoopControl &stmt)
 void lox::Interpreter::visit(const stmt::Function &stmt)
 {
 	// fine since original object is non const
-	auto function = std::make_shared<LoxFunction>(const_cast<stmt::Function&>(stmt));
+	auto function = std::make_shared<LoxFunction>(const_cast<stmt::Function&>(stmt), environment);
 	environment->define(function->name(), Object{std::in_place_type<CallablePtr>, function});
 	// register the name into environment, not global but current
+}
+
+void lox::Interpreter::visit(const stmt::Return &stmt)
+{
+	Object ret{ std::in_place_index<1>, nullptr }; // should have been nullopt_t since we have a smart pointer now
+	if (stmt.value != nullptr) ret = evaluate(*stmt.value);
+
+	throw ReturnExcept(ret);
 }
 
 void lox::Interpreter::execute(stmt::Statement &stmt)

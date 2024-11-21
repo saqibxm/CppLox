@@ -2,6 +2,7 @@
 
 #include <any>
 #include <memory>
+#include <vector>
 
 #include "Common.h"
 #include "Visitor.hpp"

@@ -18,7 +18,7 @@ funcDecl -> "fn" function ;
 function -> IDENTIFIER? "(" parameters? ")" block ;
 parameters -> IDENTIFIER ( "," IDENTIFIER )* ;
 varDecl -> IDENTIFIER ( "=" initializer )? ";" ;
-statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | controlStmt | block ;
+statement -> expressionStmt| printStmt | ifStmt | whileStmt | forStmt | controlStmt | returnStmt | block ;
 block -> "{" declaration* "}" ;
 expressionStmt -> expression ";" ;
 printStmt -> "print" expressionStmt ;
@@ -27,6 +27,7 @@ whileStmt -> "while" "(" expression ")" statement ; // can make the statement op
 forStmt -> "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
 // ( varDecl | exprStmt | ";" ) because varDecl or exprStmt already consume a semicolon
 controlStmt -> "continue" | "break" ;
+returnStmt -> "return" expression? ";" ;
 
 expression -> conditional ;
 assignment -> IDENTIFIER "=" expression
@@ -111,6 +112,7 @@ namespace lox {
 		Stmt while_loop();
 		Stmt for_loop();
 		Stmt loop_control();
+		Stmt return_stmt();
 		StatementList block();
 
 		Expr expression() {

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <exception>
+
 #include "Common/Expression.hpp"
 
 // namespace lox::stmt { struct Statement; } // forward declared by visitor.hpp already
@@ -17,6 +20,12 @@ namespace lox {
 	struct ContinueExcept : public std::exception
 	{
 		ContinueExcept() = default; // : std::exception("continue encountered") {}
+	};
+
+	struct ReturnExcept : public std::exception
+	{
+		ReturnExcept(const Object &val) : value(val) {}
+		const Object value;
 	};
 }
 
@@ -111,5 +120,15 @@ namespace lox::stmt
 		TokenList parameters;
 		StatementList body;
 		// Block body;
+	};
+
+	class Return final : public Statement
+	{
+	public:
+		Return(const Token&, Expr&&);
+		void accept(StmtVisitor&) override;
+
+		Token keyword;
+		Expr value;
 	};
 }

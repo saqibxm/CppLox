@@ -5,7 +5,7 @@
 
 #include "Lexer/Lexer.hpp"
 
-const std::unordered_map<std::string, lox::TokenType> lox::Lexer::keywords = {
+const std::map<std::string, lox::TokenType> lox::Lexer::keywords = {
 	{ "if", TokenType::IF },
 	{ "else", TokenType::ELSE },
 	{ "and", TokenType::AND },
