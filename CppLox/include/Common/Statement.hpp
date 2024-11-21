@@ -17,12 +17,12 @@ namespace lox {
 		BreakExcept() = default;
 	};
 
-	struct ContinueExcept : public std::exception
+	struct ContinueExcept final : public std::exception
 	{
 		ContinueExcept() = default; // : std::exception("continue encountered") {}
 	};
 
-	struct ReturnExcept : public std::exception
+	struct ReturnExcept final : public std::exception
 	{
 		ReturnExcept(const Object &val) : value(val) {}
 		const Object value;
