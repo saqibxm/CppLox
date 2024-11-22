@@ -1,5 +1,6 @@
 #include <iostream>
 #include <exception>
+#include <algorithm>
 
 #include "Diagnostics/Diagnostics.hpp"
 
