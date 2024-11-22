@@ -9,6 +9,7 @@
 #include "Functions/Clock.hpp"
 #include "Functions/Exit.hpp"
 #include "Functions/Random.hpp"
+#include "Functions/Sleep.hpp"
 
 lox::Interpreter::Interpreter()
 	: environment(globals)
@@ -25,6 +26,7 @@ lox::Interpreter::Interpreter()
 	globals->define("clock", std::move(internal_clock)); // type is shared_ptr
 	globals->define("exit", std::move(internal_exit));
 	globals->define("random", std::move(internal_random));
+	globals->define("sleep", NativeFunction::Ptr(new Sleep));
 }
 
 void lox::Interpreter::Interpret(const StatementList &statements)

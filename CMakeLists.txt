@@ -25,6 +25,7 @@ set(SOURCES
         CppLox/src/Functions/LoxFunction.cpp
         CppLox/src/Functions/Clock.cpp
         CppLox/src/Environment/Environment.cpp
+        CppLox/include/Functions/Sleep.hpp
 )
 
 include_directories("CppLox/include/" "CppLox/")

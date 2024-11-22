@@ -19,5 +19,5 @@ lox::Object lox::LoxFunction::call(Interpreter &interpreter, const std::vector<O
 	} catch(const lox::ReturnExcept &ret) {
 		return ret.value;
 	}
-	return nullptr; // returns null 
+	return nullptr; // returns null
 }
